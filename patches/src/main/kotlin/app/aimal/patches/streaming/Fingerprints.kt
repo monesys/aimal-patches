@@ -60,3 +60,9 @@ internal object ExoPlayerConstructorFingerprint : Fingerprint(
     returnType = "V",
     custom = { _, classDef -> EXO_PLAYER_INTERFACE in classDef.interfaces },
 )
+
+/** Disney+ coroutine that wires the native intro/recap/credits button. */
+internal object DisneySkipButtonFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    strings = listOf("SkipIntro", "SkipRecap", "SkipCredits"),
+)
