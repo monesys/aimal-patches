@@ -6,6 +6,8 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 
 private const val CONTROLS = "$EXTENSION_STREAMING/Controls;"
 private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
@@ -39,7 +41,7 @@ private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
 @Suppress("unused")
 val playbackControlsPatch = bytecodePatch(
     name = "Playback speed and aspect ratio",
-    description = "Adds a floating panel to change playback speed and stretch, crop or zoom the picture.",
+    description = "Adds playback speed, aspect ratio and automatic intro-skip controls.",
     default = true,
 ) {
     compatibleWith(HBO_MAX, DISNEY_PLUS, VIKI)
@@ -118,6 +120,26 @@ val playbackControlsPatch = bytecodePatch(
             throw PatchException(
                 "Found ${playerConstructors.size} ExoPlayer constructor(s) but none had a " +
                     "return-void to hook, so the speed control would silently do nothing."
+            )
+        }
+
+        // Disney+ emits a native event when a skip marker becomes active and
+        // installs the button's click listener. Hook that one-shot event.
+        DisneySkipButtonFingerprint.methodOrNull?.let { method ->
+            val index = method.implementation!!.instructions.indexOfFirst { instruction ->
+                instruction is ReferenceInstruction &&
+                    instruction.reference.toString().endsWith(
+                        "->setOnClickListener(Landroid/view/View\$OnClickListener;)V"
+                    )
+            }
+            if (index < 0) throw PatchException("Disney+ native skip-button hook not found.")
+
+            val register =
+                (method.implementation!!.instructions[index] as FiveRegisterInstruction).registerC
+            method.addInstruction(
+                index + 1,
+                "invoke-static/range { v$register .. v$register }, " +
+                    "$CONTROLS->onNativeSkipButton(Landroid/view/View;)V"
             )
         }
     }

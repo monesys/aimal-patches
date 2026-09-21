@@ -51,6 +51,7 @@ final class ControlPanel extends LinearLayout {
     private TextView collapsedChip;
     private LinearLayout expandedRow;
     private TextView aspectChip;
+    private TextView introSkipChip;
     private final TextView[] speedChips = new TextView[SPEEDS.length];
 
     private LinearLayout subtitleRow;
@@ -172,6 +173,22 @@ final class ControlPanel extends LinearLayout {
             }
         });
         expandedRow.addView(aspectChip);
+
+        introSkipChip = chip(introSkipLabel(), true);
+        introSkipChip.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                poke();
+                Prefs.introSkip(!Prefs.introSkip());
+                introSkipChip.setText(introSkipLabel());
+                introSkipChip.setBackground(rounded(
+                        Prefs.introSkip() ? COLOR_CHIP_SELECTED : COLOR_CHIP, dp(16)));
+                if (Prefs.introSkip()) Controls.applyIntroSkip();
+            }
+        });
+        introSkipChip.setBackground(rounded(
+                Prefs.introSkip() ? COLOR_CHIP_SELECTED : COLOR_CHIP, dp(16)));
+        expandedRow.addView(introSkipChip);
 
         subtitleToggleChip = chip("CC", true);
         subtitleToggleChip.setOnClickListener(new OnClickListener() {
@@ -401,6 +418,10 @@ final class ControlPanel extends LinearLayout {
 
     private static String speedLabel(float speed) {
         return (speed == (int) speed ? String.valueOf((int) speed) : String.valueOf(speed)) + "\u00D7";
+    }
+
+    private static String introSkipLabel() {
+        return Prefs.introSkip() ? "Intro ON" : "Intro OFF";
     }
 
     private static int clamp(int value, int min, int max) {

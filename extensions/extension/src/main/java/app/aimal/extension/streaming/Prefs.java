@@ -15,6 +15,7 @@ final class Prefs {
     private static final String KEY_ASPECT = "aspect";
     private static final String KEY_PANEL_X = "panel_x";
     private static final String KEY_PANEL_Y = "panel_y";
+    private static final String KEY_INTRO_SKIP = "intro_skip";
 
     private static final String KEY_SUB_SIZE = "subtitle_size";
     private static final String KEY_SUB_FONT = "subtitle_font";
@@ -57,6 +58,14 @@ final class Prefs {
     static void panelPosition(int x, int y) {
         if (preferences == null) return;
         preferences.edit().putInt(KEY_PANEL_X, x).putInt(KEY_PANEL_Y, y).apply();
+    }
+
+    static boolean introSkip() {
+        return preferences != null && preferences.getBoolean(KEY_INTRO_SKIP, false);
+    }
+
+    static void introSkip(boolean value) {
+        if (preferences != null) preferences.edit().putBoolean(KEY_INTRO_SKIP, value).apply();
     }
 
     // Subtitles ---------------------------------------------------------------

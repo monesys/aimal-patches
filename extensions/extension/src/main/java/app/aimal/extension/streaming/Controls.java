@@ -185,6 +185,18 @@ public final class Controls {
         Logger.d("Panel detached");
     }
 
+    static void applyIntroSkip() {
+        Activity activity = activityReference.get();
+        if (activity != null && activity.getWindow() != null) {
+            IntroSkip.apply(activity.getWindow().getDecorView());
+        }
+    }
+
+    /** Called once when Disney+ makes its native skip action available. */
+    public static void onNativeSkipButton(View button) {
+        IntroSkip.onButtonReady(button);
+    }
+
     /**
      * Observes the Activity's touch stream without consuming it. A hidden
      * panel cannot receive gestures itself, so the Window callback is wrapped
