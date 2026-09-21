@@ -11,7 +11,7 @@ private const val CONTROLS = "$EXTENSION_STREAMING/Controls;"
 private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
 
 /**
- * Adds a floating panel with playback speed (1x / 1.25x / 1.5x / 2x) and an
+ * Adds a floating panel with playback speed (1x to 2x in 0.2x steps) and an
  * aspect-ratio toggle (fit, stretch, crop and two fixed zoom steps) to HBO Max,
  * Disney+ and Viki.
  *
