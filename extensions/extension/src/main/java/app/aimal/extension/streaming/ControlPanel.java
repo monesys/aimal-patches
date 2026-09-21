@@ -28,7 +28,7 @@ import android.widget.Toast;
  */
 @SuppressLint("ViewConstructor")
 final class ControlPanel extends LinearLayout {
-    private static final float[] SPEEDS = {1f, 1.25f, 1.5f, 2f};
+    private static final float[] SPEEDS = {1f, 1.2f, 1.4f, 1.6f, 1.8f, 2f};
 
     /** Time with no interaction before the panel dims and collapses. */
     private static final long IDLE_MS = 3000;
