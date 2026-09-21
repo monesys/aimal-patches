@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/monesys/aimal-patches/compare/v1.1.0...v1.1.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* warn against Disney Plus Android TV build ([aec8f80](https://github.com/monesys/aimal-patches/commit/aec8f80d72fa0b18c151dc719bcb2ff4adfd9792))
+
 # [1.1.0](https://github.com/monesys/aimal-patches/compare/v1.0.0...v1.1.0) (2026-09-21)
 
 

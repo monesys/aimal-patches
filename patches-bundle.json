@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-21T01:54:36",
-  "description": "# [1.1.0](https://github.com/monesys/aimal-patches/compare/v1.0.0...v1.1.0) (2026-09-21)\n\n\n### Features\n\n* add finer playback speed steps ([8c94250](https://github.com/monesys/aimal-patches/commit/8c9425062fd87d336644a918013a033e1e485fb1))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.1.0/patches-1.1.0.mpp",
+  "created_at": "2026-09-21T02:17:26",
+  "description": "## [1.1.1](https://github.com/monesys/aimal-patches/compare/v1.1.0...v1.1.1) (2026-09-21)\n\n\n### Bug Fixes\n\n* warn against Disney Plus Android TV build ([aec8f80](https://github.com/monesys/aimal-patches/commit/aec8f80d72fa0b18c151dc719bcb2ff4adfd9792))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.1.1/patches-1.1.1.mpp",
   "signature_download_url": "",
-  "version": "1.1.0"
+  "version": "1.1.1"
 }
