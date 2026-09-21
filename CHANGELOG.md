@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/monesys/aimal-patches/compare/v1.2.0...v1.2.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* match Disney skip listener across invocation forms ([5b2a6d5](https://github.com/monesys/aimal-patches/commit/5b2a6d560457b74dd3aee82843910ad27309e22b))
+
 # [1.2.0](https://github.com/monesys/aimal-patches/compare/v1.1.1...v1.2.0) (2026-09-21)
 
 
