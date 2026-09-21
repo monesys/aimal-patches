@@ -1,3 +1,10 @@
+# [1.2.0-native-intro-skip.1](https://github.com/monesys/aimal-patches/compare/v1.1.1...v1.2.0-native-intro-skip.1) (2026-09-21)
+
+
+### Features
+
+* add native Disney+ intro skip ([3e5d91b](https://github.com/monesys/aimal-patches/commit/3e5d91be644faeca02c1a40363822d9678f025ed))
+
 ## [1.1.1](https://github.com/monesys/aimal-patches/compare/v1.1.0...v1.1.1) (2026-09-21)
 
 

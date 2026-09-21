@@ -56,7 +56,7 @@ resources are resolved under a phone configuration.
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.1](https://github.com/monesys/aimal-patches/releases/tag/v1.1.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;8 patches total
+> **[v1.2.0-native-intro-skip.1](https://github.com/monesys/aimal-patches/releases/tag/v1.2.0-native-intro-skip.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`codex/native-intro-skip`&nbsp;&nbsp;•&nbsp;&nbsp;8 patches total
 <details open>
 <summary>📦 Crunchyroll&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -85,7 +85,7 @@ resources are resolved under a phone configuration.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds a floating panel to change playback speed and stretch, crop or zoom the picture. |  |
+| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
 
 </details>
 
@@ -100,7 +100,7 @@ resources are resolved under a phone configuration.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds a floating panel to change playback speed and stretch, crop or zoom the picture. |  |
+| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
 
 </details>
 
@@ -115,7 +115,7 @@ resources are resolved under a phone configuration.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds a floating panel to change playback speed and stretch, crop or zoom the picture. |  |
+| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
 | [Remove ads](#remove-ads) | Removes pre-roll and mid-roll video ads, and the display banners. |  |
 | [Use the whole screen for video](#use-the-whole-screen-for-video) | Hides the comments panel beside the player on tablets and unfolded foldables. |  |
 

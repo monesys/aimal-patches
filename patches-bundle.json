@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-21T02:17:26",
-  "description": "## [1.1.1](https://github.com/monesys/aimal-patches/compare/v1.1.0...v1.1.1) (2026-09-21)\n\n\n### Bug Fixes\n\n* warn against Disney Plus Android TV build ([aec8f80](https://github.com/monesys/aimal-patches/commit/aec8f80d72fa0b18c151dc719bcb2ff4adfd9792))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.1.1/patches-1.1.1.mpp",
+  "created_at": "2026-09-21T04:59:03",
+  "description": "# [1.2.0-native-intro-skip.1](https://github.com/monesys/aimal-patches/compare/v1.1.1...v1.2.0-native-intro-skip.1) (2026-09-21)\n\n\n### Features\n\n* add native Disney+ intro skip ([3e5d91b](https://github.com/monesys/aimal-patches/commit/3e5d91be644faeca02c1a40363822d9678f025ed))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.2.0-native-intro-skip.1/patches-1.2.0-native-intro-skip.1.mpp",
   "signature_download_url": "",
-  "version": "1.1.1"
+  "version": "1.2.0-native-intro-skip.1"
 }
