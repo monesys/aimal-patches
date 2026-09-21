@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/monesys/aimal-patches/compare/v1.2.1...v1.2.2) (2026-09-21)
+
+
+### Bug Fixes
+
+* hook Disney native skip state directly ([f1297ba](https://github.com/monesys/aimal-patches/commit/f1297baa234ed5d422d1e5f040aa7f9ab625e082))
+
 ## [1.2.1](https://github.com/monesys/aimal-patches/compare/v1.2.0...v1.2.1) (2026-09-21)
 
 
