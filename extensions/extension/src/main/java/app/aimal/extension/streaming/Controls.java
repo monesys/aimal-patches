@@ -192,9 +192,9 @@ public final class Controls {
         }
     }
 
-    /** Called once when Disney+ makes its native skip action available. */
-    public static void onNativeSkipButton(View button) {
-        IntroSkip.onButtonReady(button);
+    /** Called once when Disney+ emits its native visible skip state. */
+    public static void onNativeSkipState(Object state) {
+        IntroSkip.onStateReady(state);
     }
 
     /**

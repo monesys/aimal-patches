@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.Locale;
 
@@ -41,15 +42,25 @@ final class IntroSkip {
         }
     }
 
-    /** Handles Disney+'s native skip-button-ready event without polling. */
-    static void onButtonReady(final View button) {
-        if (!Prefs.introSkip() || button == null || !isIntroResource(button)) return;
-        button.post(new Runnable() {
-            @Override
-            public void run() {
-                if (Prefs.introSkip()) clickOnce(button);
+    /** Handles Disney+'s native visible-skip state without polling. */
+    static void onStateReady(Object state) {
+        if (!Prefs.introSkip() || state == null) return;
+        try {
+            String label = null;
+            long skipPoint = -1;
+            for (Field field : state.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.getType() == String.class) label = (String) field.get(state);
+                else if (field.getType() == long.class) skipPoint = field.getLong(state);
             }
-        });
+
+            if ("SkipIntro".equals(label) && skipPoint >= 0) {
+                PlayerBridge.seekTo(skipPoint + 1);
+                Logger.d("Native intro skip dispatched to " + skipPoint);
+            }
+        } catch (Throwable t) {
+            Logger.e("Native intro skip state failed", t);
+        }
     }
 
     private static boolean isIntroResource(View view) {

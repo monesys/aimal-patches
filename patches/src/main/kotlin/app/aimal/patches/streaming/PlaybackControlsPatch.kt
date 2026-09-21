@@ -2,13 +2,11 @@ package app.aimal.patches.streaming
 
 import app.aimal.patches.viki.VIKI
 import app.aimal.patches.viki.VikiApplicationFingerprint
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 
 private const val CONTROLS = "$EXTENSION_STREAMING/Controls;"
 private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
@@ -124,26 +122,31 @@ val playbackControlsPatch = bytecodePatch(
             )
         }
 
-        // Disney+ emits a native event when a skip marker becomes active and
-        // installs the button's click listener. Hook that one-shot event.
-        DisneySkipButtonFingerprint.methodOrNull?.let { method ->
-            val index = method.implementation!!.instructions.indexOfFirst { instruction ->
-                instruction is ReferenceInstruction &&
-                    instruction.reference.toString().contains("->setOnClickListener(")
-            }
-            if (index < 0) throw PatchException("Disney+ native skip-button hook not found.")
+        // Disney+ creates this state exactly once when a native skip action
+        // becomes visible. Hook the state constructor instead of searching
+        // for a particular UI implementation or listener invocation.
+        DisneySkipStateFingerprint.methodOrNull?.let { stateMethod ->
+            val stateClass = stateMethod.definingClass
+            val constructor = Fingerprint(
+                name = "<init>",
+                returnType = "V",
+                parameters = listOf("Ljava/lang/String;", "Z", "J", "Z"),
+                custom = { _, classDef -> classDef.type == stateClass },
+            ).method
 
-            val call = method.implementation!!.instructions[index]
-            val register = when (call) {
-                is FiveRegisterInstruction -> call.registerC
-                is RegisterRangeInstruction -> call.startRegister
-                else -> throw PatchException("Unsupported Disney+ skip-button invocation format.")
+            val returnIndices = constructor.implementation!!.instructions
+                .withIndex()
+                .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_VOID }
+                .map { (index, _) -> index }
+            if (returnIndices.isEmpty()) throw PatchException("Disney+ skip-state constructor has no return.")
+
+            returnIndices.asReversed().forEach { index ->
+                constructor.addInstruction(
+                    index,
+                    "invoke-static/range { p0 .. p0 }, " +
+                        "$CONTROLS->onNativeSkipState(Ljava/lang/Object;)V"
+                )
             }
-            method.addInstruction(
-                index + 1,
-                "invoke-static/range { v$register .. v$register }, " +
-                    "$CONTROLS->onNativeSkipButton(Landroid/view/View;)V"
-            )
         }
     }
 }

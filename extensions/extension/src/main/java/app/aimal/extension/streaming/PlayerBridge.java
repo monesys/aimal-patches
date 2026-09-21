@@ -125,6 +125,33 @@ public final class PlayerBridge {
         return live.size();
     }
 
+    /** Seeks captured media3 players to Disney+'s native intro endpoint. */
+    static void seekTo(final long positionMs) {
+        for (final Object player : livePlayers()) {
+            Looper looper = applicationLooper(player);
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Method seek = null;
+                        for (Class<?> owner : publicTypes(player.getClass())) {
+                            try {
+                                seek = owner.getMethod("seekTo", long.class);
+                                break;
+                            } catch (NoSuchMethodException ignored) {
+                            }
+                        }
+                        if (seek != null) seek.invoke(player, positionMs);
+                    } catch (Throwable t) {
+                        Logger.e("Intro seek failed", t);
+                    }
+                }
+            };
+            if (looper == null || looper == Looper.myLooper()) action.run();
+            else new Handler(looper).post(action);
+        }
+    }
+
     private static void apply(Object player, float speed) {
         Method method = resolve(player);
 

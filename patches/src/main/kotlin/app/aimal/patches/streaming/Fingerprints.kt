@@ -61,8 +61,8 @@ internal object ExoPlayerConstructorFingerprint : Fingerprint(
     custom = { _, classDef -> EXO_PLAYER_INTERFACE in classDef.interfaces },
 )
 
-/** Disney+ coroutine that wires the native intro/recap/credits button. */
-internal object DisneySkipButtonFingerprint : Fingerprint(
-    returnType = "Ljava/lang/Object;",
-    strings = listOf("SkipIntro", "SkipRecap", "SkipCredits"),
+/** Disney+ state object emitted when its native skip action becomes visible. */
+internal object DisneySkipStateFingerprint : Fingerprint(
+    returnType = "Ljava/lang/String;",
+    strings = listOf("Show(label=", ", shouldRequestFocus=", ", skipPointMs=", ", isControlsVisible="),
 )
