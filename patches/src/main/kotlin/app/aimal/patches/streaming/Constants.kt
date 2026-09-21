@@ -35,6 +35,8 @@ val DISNEY_PLUS = Compatibility(
         AppTarget(
             version = "26.14.1+rc2-2026.08.20",
             versionCode = 178724737,
+            description = "⚠️ Phone/tablet build only (versionCode 178724737). " +
+                "Do not use the Android TV build (versionCode 1787247370).",
         ),
         AppTarget(version = null, isExperimental = true),
     )
