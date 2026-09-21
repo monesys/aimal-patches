@@ -187,8 +187,7 @@ final class ControlPanel extends LinearLayout {
         close.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setExpanded(false);
-                animate().alpha(IDLE_ALPHA).setDuration(200).start();
+                hideCompletely();
             }
         });
         expandedRow.addView(close);
@@ -298,6 +297,20 @@ final class ControlPanel extends LinearLayout {
         animate().cancel();
         setAlpha(1f);
         idleHandler.postDelayed(idleAction, IDLE_MS);
+    }
+
+    /** Hides every part of the panel until the player receives a double-tap. */
+    private void hideCompletely() {
+        idleHandler.removeCallbacks(idleAction);
+        animate().cancel();
+        setVisibility(GONE);
+    }
+
+    /** Restores a panel hidden with the close button. */
+    void showFromGesture() {
+        setVisibility(VISIBLE);
+        setExpanded(true);
+        poke();
     }
 
     private void setExpanded(boolean value) {

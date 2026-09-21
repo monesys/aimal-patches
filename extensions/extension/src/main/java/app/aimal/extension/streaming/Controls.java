@@ -7,11 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * Entry point of the extension and the only class the patch calls into
@@ -32,6 +39,10 @@ public final class Controls {
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);
     private static ControlPanel panel;
     private static WeakReference<View> videoReference = new WeakReference<>(null);
+    private static WeakReference<Window> gestureWindowReference = new WeakReference<>(null);
+    private static Window.Callback originalWindowCallback;
+    private static Window.Callback gestureWindowCallback;
+    private static GestureDetector gestureDetector;
     private static long lastScanUptime;
 
     private Controls() {
@@ -78,6 +89,7 @@ public final class Controls {
         View decor = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
         if (decor == null) return;
 
+        installGestureMonitor(activity);
         decor.getViewTreeObserver().addOnGlobalLayoutListener(LAYOUT_LISTENER);
         scan();
     }
@@ -90,6 +102,7 @@ public final class Controls {
             decor.getViewTreeObserver().removeOnGlobalLayoutListener(LAYOUT_LISTENER);
         }
 
+        uninstallGestureMonitor(activity);
         detachPanel();
         activityReference = new WeakReference<>(null);
         videoReference = new WeakReference<>(null);
@@ -170,6 +183,81 @@ public final class Controls {
         if (parent != null) parent.removeView(panel);
         panel = null;
         Logger.d("Panel detached");
+    }
+
+    /**
+     * Observes the Activity's touch stream without consuming it. A hidden
+     * panel cannot receive gestures itself, so the Window callback is wrapped
+     * and every call is still delegated to the app unchanged.
+     */
+    private static void installGestureMonitor(Activity activity) {
+        final Window window = activity.getWindow();
+        if (window == null) return;
+
+        uninstallGestureMonitor(null);
+
+        final Window.Callback delegate = window.getCallback();
+        if (delegate == null) return;
+
+        gestureDetector = new GestureDetector(activity,
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onDown(MotionEvent event) {
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent event) {
+                        if (panel != null
+                                && panel.getVisibility() != View.VISIBLE
+                                && currentVideo() != null) {
+                            panel.showFromGesture();
+                            Logger.d("Panel restored by double-tap");
+                        }
+                        return false;
+                    }
+                });
+
+        originalWindowCallback = delegate;
+        gestureWindowCallback = (Window.Callback) Proxy.newProxyInstance(
+                Controls.class.getClassLoader(),
+                new Class<?>[]{Window.Callback.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        if ("dispatchTouchEvent".equals(method.getName())
+                                && args != null
+                                && args.length == 1
+                                && args[0] instanceof MotionEvent
+                                && gestureDetector != null) {
+                            gestureDetector.onTouchEvent((MotionEvent) args[0]);
+                        }
+
+                        try {
+                            return method.invoke(delegate, args);
+                        } catch (InvocationTargetException exception) {
+                            throw exception.getCause();
+                        }
+                    }
+                });
+
+        window.setCallback(gestureWindowCallback);
+        gestureWindowReference = new WeakReference<>(window);
+    }
+
+    private static void uninstallGestureMonitor(Activity activity) {
+        Window window = gestureWindowReference.get();
+        if (window == null) return;
+        if (activity != null && activity.getWindow() != window) return;
+
+        if (window.getCallback() == gestureWindowCallback && originalWindowCallback != null) {
+            window.setCallback(originalWindowCallback);
+        }
+
+        gestureWindowReference = new WeakReference<>(null);
+        originalWindowCallback = null;
+        gestureWindowCallback = null;
+        gestureDetector = null;
     }
 
     private static final class Lifecycle implements Application.ActivityLifecycleCallbacks {

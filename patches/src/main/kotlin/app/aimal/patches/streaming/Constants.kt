@@ -29,7 +29,13 @@ val DISNEY_PLUS = Compatibility(
     apkFileType = ApkFileType.APKM,
     appIconColor = 0x0C204A,
     targets = listOf(
-        AppTarget(version = "26.14.1+rc2-2026.08.20"),
+        // The Android TV release uses the same package and version name but a
+        // different version code (1787247370). It is not usable on phones:
+        // its navigation resources only exist under television qualifiers.
+        AppTarget(
+            version = "26.14.1+rc2-2026.08.20",
+            versionCode = 178724737,
+        ),
         AppTarget(version = null, isExperimental = true),
     )
 )

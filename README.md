@@ -11,7 +11,7 @@ the comments panel that eats a third of the screen when you unfold a phone.
 | --- | --- | --- |
 | Crunchyroll | `com.crunchyroll.crunchyroid` | 3.117.0 |
 | HBO Max | `com.wbd.stream` | 7.9.0.84 |
-| Disney+ | `com.disney.disneyplus` | 26.14.1+rc2-2026.08.20 |
+| Disney+ | `com.disney.disneyplus` | 26.14.1+rc2-2026.08.20 (versionCode 178724737) |
 | Viki | `com.viki.android` | 26.5.0 |
 
 Every fingerprint matches on structure or on names the apps cannot obfuscate,
@@ -47,6 +47,11 @@ java -jar morphe-desktop-*-all.jar patch -p https://github.com/hashtagbasit/aima
 
 All four apps are distributed as split bundles (`.apkm`); Manager and Desktop
 merge them for you.
+
+For Disney+, use the phone/tablet bundle (versionCode `178724737`). The Android
+TV release has the same package and version name but versionCode `1787247370`;
+it is not compatible with phones and crashes when its TV-only navigation
+resources are resolved under a phone configuration.
 
 ## Patches list
 
@@ -145,7 +150,8 @@ runtime: the video surface is found by walking the view tree, speed goes through
 media3's `setPlaybackSpeed`, and the picture is reshaped through
 `AspectRatioFrameLayout.setResizeMode`. A floating panel over the player carries
 the controls; it dims and collapses a few seconds after you stop touching it, and
-can be dragged out of the way.
+can be dragged out of the way. The close button hides it completely; double-tap
+the video to bring it back.
 
 Because none of that depends on any app's layouts or class names, one patch
 covers three apps that share nothing but their media stack, and it should
