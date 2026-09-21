@@ -8,6 +8,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 
 private const val CONTROLS = "$EXTENSION_STREAMING/Controls;"
 private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
@@ -128,14 +129,16 @@ val playbackControlsPatch = bytecodePatch(
         DisneySkipButtonFingerprint.methodOrNull?.let { method ->
             val index = method.implementation!!.instructions.indexOfFirst { instruction ->
                 instruction is ReferenceInstruction &&
-                    instruction.reference.toString().endsWith(
-                        "->setOnClickListener(Landroid/view/View\$OnClickListener;)V"
-                    )
+                    instruction.reference.toString().contains("->setOnClickListener(")
             }
             if (index < 0) throw PatchException("Disney+ native skip-button hook not found.")
 
-            val register =
-                (method.implementation!!.instructions[index] as FiveRegisterInstruction).registerC
+            val call = method.implementation!!.instructions[index]
+            val register = when (call) {
+                is FiveRegisterInstruction -> call.registerC
+                is RegisterRangeInstruction -> call.startRegister
+                else -> throw PatchException("Unsupported Disney+ skip-button invocation format.")
+            }
             method.addInstruction(
                 index + 1,
                 "invoke-static/range { v$register .. v$register }, " +
