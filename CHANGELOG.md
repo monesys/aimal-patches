@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/monesys/aimal-patches/compare/v1.0.0...v1.1.0) (2026-09-21)
+
+
+### Features
+
+* add finer playback speed steps ([8c94250](https://github.com/monesys/aimal-patches/commit/8c9425062fd87d336644a918013a033e1e485fb1))
+
 # 1.0.0 (2026-09-21)
 
 
