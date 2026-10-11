@@ -56,7 +56,7 @@ resources are resolved under a phone configuration.
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.2.2](https://github.com/monesys/aimal-patches/releases/tag/v1.2.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;8 patches total
+> **[v1.3.0](https://github.com/monesys/aimal-patches/releases/tag/v1.3.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;7 patches total
 <details open>
 <summary>📦 Crunchyroll&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -75,22 +75,7 @@ resources are resolved under a phone configuration.
 </details>
 
 <details open>
-<summary>📦 HBO Max&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**🎯 Supported versions:**
-
-| 7.9.0.84 |
-| :---: |
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
-|----------|----------------|-----------|
-| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
-
-</details>
-
-<details open>
-<summary>📦 Disney+&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<summary>📦 Disney+&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -100,12 +85,13 @@ resources are resolved under a phone configuration.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
+| [Direct password login](#direct-password-login) | Bypasses the one-time passcode (OTP) prompt and directly opens the password login screen on Disney+. |  |
 | [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
 
 </details>
 
 <details open>
-<summary>📦 Viki&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<summary>📦 Viki&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -115,7 +101,6 @@ resources are resolved under a phone configuration.
 
 | 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
 |----------|----------------|-----------|
-| [Playback speed and aspect ratio](#playback-speed-and-aspect-ratio) | Adds playback speed, aspect ratio and automatic intro-skip controls. |  |
 | [Remove ads](#remove-ads) | Removes pre-roll and mid-roll video ads, and the display banners. |  |
 | [Use the whole screen for video](#use-the-whole-screen-for-video) | Hides the comments panel beside the player on tablets and unfolded foldables. |  |
 

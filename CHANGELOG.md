@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/monesys/aimal-patches/compare/v1.2.2...v1.3.0) (2026-10-11)
+
+
+### Features
+
+* **disney:** add direct password login patch to bypass OTP prompt ([c0d0a10](https://github.com/monesys/aimal-patches/commit/c0d0a1056f6f5d7d7289a6f7d2726e06587f79b8))
+
 ## [1.2.2](https://github.com/monesys/aimal-patches/compare/v1.2.1...v1.2.2) (2026-09-21)
 
 

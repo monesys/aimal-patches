@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "patches": [
     {
       "name": "Aspect ratio control",
@@ -19,6 +19,44 @@
             {
               "version": "3.117.0",
               "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            },
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Direct password login",
+      "description": "Bypasses the one-time passcode (OTP) prompt and directly opens the password login screen on Disney+.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.disney.disneyplus",
+          "name": "Disney+",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#0C204A",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "26.14.1+rc2-2026.08.20",
+              "versionCodes": {
+                "ARM64_V8A": 178724737,
+                "ARMEABI_V7A": 178724737,
+                "X86_64": 178724737,
+                "X86": 178724737
+              },
               "isExperimental": false,
               "minSdk": null,
               "description": null
@@ -75,30 +113,6 @@
       "dependencies": [],
       "compatiblePackages": [
         {
-          "packageName": "com.wbd.stream",
-          "name": "HBO Max",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#2C0B4E",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "7.9.0.84",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": null,
-              "versionCodes": null,
-              "isExperimental": true,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
           "packageName": "com.disney.disneyplus",
           "name": "Disney+",
           "description": null,
@@ -114,30 +128,6 @@
                 "X86_64": 178724737,
                 "X86": 178724737
               },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": null,
-              "versionCodes": null,
-              "isExperimental": true,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.viki.android",
-          "name": "Viki",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#0C9CFF",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "26.5.0",
-              "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": null
