@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/monesys/aimal-patches/compare/v1.3.0...v1.3.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* **disney:** resolve CheckQuery ResponseAdapter fingerprint for R8-minified builds ([1dc82c5](https://github.com/monesys/aimal-patches/commit/1dc82c57adb1858e65df5fc63a3e6efd0cbc0ee0))
+
 # [1.3.0](https://github.com/monesys/aimal-patches/compare/v1.2.2...v1.3.0) (2026-10-11)
 
 
