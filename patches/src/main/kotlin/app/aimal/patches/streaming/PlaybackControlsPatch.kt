@@ -4,6 +4,7 @@ import app.aimal.patches.streaming.DisneyPlusMainActivityFingerprint
 import app.aimal.patches.streaming.DisneySkipStateFingerprint
 import app.aimal.patches.streaming.ExoPlayerConstructorFingerprint
 import app.aimal.patches.streaming.EXTENSION_STREAMING
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -93,13 +94,13 @@ val playbackControlsPatch = bytecodePatch(
             //
             // Every return-void is hooked rather than just the first, so an
             // early exit path cannot slip through.
-            val returnIndices = method.implementation!!.instructions
+            val returnIndices: List<Int> = method.implementation!!.instructions
                 .withIndex()
-                .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_VOID }
-                .map { (index, _) -> index }
+                .filter { it.value.opcode == Opcode.RETURN_VOID }
+                .map { it.index }
 
             // Reversed so the earlier indices stay valid as code is inserted.
-            returnIndices.asReversed().forEach { index ->
+            returnIndices.asReversed().forEach { index: Int ->
                 method.addInstruction(
                     index,
                     "invoke-static/range { p0 .. p0 }, " +
@@ -128,13 +129,13 @@ val playbackControlsPatch = bytecodePatch(
                 custom = { _, classDef -> classDef.type == stateClass },
             ).method
 
-            val returnIndices = constructor.implementation!!.instructions
+            val returnIndices: List<Int> = constructor.implementation!!.instructions
                 .withIndex()
-                .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_VOID }
-                .map { (index, _) -> index }
+                .filter { it.value.opcode == Opcode.RETURN_VOID }
+                .map { it.index }
             if (returnIndices.isEmpty()) throw PatchException("Disney+ skip-state constructor has no return.")
 
-            returnIndices.asReversed().forEach { index ->
+            returnIndices.asReversed().forEach { index: Int ->
                 constructor.addInstruction(
                     index,
                     "invoke-static/range { p0 .. p0 }, " +
