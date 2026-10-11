@@ -1,0 +1,33 @@
+パッケージ: com.disney.disneyplus
+バージョン: 26.14.1+rc2-2026.08.20
+パッチ: 2
+ソース: Aimal Patches 1.3.0
+マネージャー: 1.32.0
+パッチャー: 1.14.1
+ライブラリ: 保持済み
+Android: 11 (API 30)
+デバイス: SHARP SHV45
+メモリ: 1.07 GB / 3.93 GB
+ストレージ: 24.88 GB / 46.37 GB
+
+app.morphe.patcher.patch.PatchException: Could not find Disney+ CheckQuery ResponseAdapter. This patch targets Disney+ (com.disney.disneyplus).
+	at app.aimal.patches.streaming.PasswordLoginPatchKt.passwordLoginPatch$lambda$2$lambda$1(PasswordLoginPatch.kt:28)
+	at app.aimal.patches.streaming.PasswordLoginPatchKt.$r8$lambda$6EQdHBDB0UNp075zALwut5pDQto(Unknown Source:0)
+	at app.aimal.patches.streaming.PasswordLoginPatchKt$$ExternalSyntheticLambda1.invoke(D8$$SyntheticClass:0)
+	at app.morphe.patcher.patch.Patch.execute(SourceFile:120)
+	at app.morphe.patcher.patch.BytecodePatch.execute$morphe_patcher(SourceFile:264)
+	at app.morphe.patcher.Patcher$invoke$1.invokeSuspend$execute(SourceFile:96)
+	at app.morphe.patcher.Patcher$invoke$1.invokeSuspend(SourceFile:120)
+	at app.morphe.patcher.Patcher$invoke$1.invoke(SourceFile:0)
+	at app.morphe.patcher.Patcher$invoke$1.invoke(SourceFile:0)
+	at kotlinx.coroutines.flow.SafeFlow.collectSafely(SourceFile:57)
+	at kotlinx.coroutines.flow.AbstractFlow.collect(SourceFile:226)
+	at app.morphe.manager.patcher.Session.applyPatchesVerbose(SourceFile:54)
+	at app.morphe.manager.patcher.Session.run(SourceFile:100)
+	at app.morphe.manager.patcher.runtime.process.PatcherProcess$start$1.invokeSuspend(SourceFile:120)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(SourceFile:34)
+	at kotlinx.coroutines.DispatchedTask.run(SourceFile:100)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(SourceFile:586)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(SourceFile:807)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(SourceFile:717)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(SourceFile:704)
