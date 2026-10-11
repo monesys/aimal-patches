@@ -70,8 +70,16 @@ internal object DisneySkipStateFingerprint : Fingerprint(
 /**
  * Disney+ Apollo GraphQL ResponseAdapter for CheckQuery.
  * Deserializes `operations` and `nextOperation` from the authentication backend.
+ *
+ * In R8-minified builds, `fromJson` only contains "operations" (via non-null assertion);
+ * "nextOperation" is nullable in the GraphQL schema and only exists as a literal in
+ * `<clinit>` (RESPONSE_NAMES) and `toJson`.
  */
 internal object DisneyCheckResponseAdapterFingerprint : Fingerprint(
     name = "fromJson",
-    strings = listOf("operations", "nextOperation"),
+    parameters = listOf(
+        "Lcom/apollographql/apollo/api/json/JsonReader;",
+        "Lcom/apollographql/apollo/api/CustomScalarAdapters;",
+    ),
+    strings = listOf("operations"),
 )
