@@ -1,0 +1,146 @@
+package app.aimal.patches.streaming
+
+import app.aimal.patches.streaming.DisneyPlusMainActivityFingerprint
+import app.aimal.patches.streaming.DisneySkipStateFingerprint
+import app.aimal.patches.streaming.ExoPlayerConstructorFingerprint
+import app.aimal.patches.streaming.EXTENSION_STREAMING
+import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.bytecodePatch
+import com.android.tools.smali.dexlib2.Opcode
+
+private const val CONTROLS = "$EXTENSION_STREAMING/Controls;"
+private const val PLAYER_BRIDGE = "$EXTENSION_STREAMING/PlayerBridge;"
+
+/**
+ * Adds a floating panel with playback speed (1x to 2x in 0.2x steps) and an
+ * aspect-ratio toggle (fit, stretch, crop and two fixed zoom steps) to HBO Max,
+ * Disney+ and Viki.
+ *
+ * Only two things are injected, both one instruction long:
+ *
+ *  1. The application context, so the extension can attach its panel.
+ *  2. The player instance, captured as each ExoPlayer is constructed.
+ *
+ * Everything else happens at runtime in the extension: the video surface is
+ * found by walking the view tree, the speed is set through media3's own
+ * setPlaybackSpeed, and the picture is reshaped through media3's
+ * AspectRatioFrameLayout.setResizeMode - all of which survive the apps'
+ * obfuscation. That is why this needs no per-screen, per-layout or
+ * per-version fingerprints, and why one patch covers three apps that share
+ * nothing but their media stack.
+ *
+ * Viki is the exception to "setPlaybackSpeed survives": it strips media3's
+ * Player interface down so far that no `(float)` method is left on it at all.
+ * The extension falls back to building a PlaybackParameters and calling the
+ * setter that takes it, both identified by shape rather than by name - see
+ * PlayerBridge. Nothing in this patch has to know about that.
+ *
+ * Nothing here touches DRM, licensing, entitlement or ad code.
+ */
+@Suppress("unused")
+val playbackControlsPatch = bytecodePatch(
+    name = "Playback speed and aspect ratio",
+    description = "Adds playback speed, aspect ratio and automatic intro-skip controls.",
+    default = true,
+) {
+    compatibleWith(DISNEY_PLUS)
+
+    extendWith("extensions/extension.mpe")
+
+    execute {
+        // 1. Hand the extension a context.
+        // Disney+ does not declare its own Application.onCreate, so its main
+        // Activity is used instead.
+        val contextHook = DisneyPlusMainActivityFingerprint.methodOrNull
+            ?: throw PatchException(
+                "Could not find a context hook. This patch targets " +
+                    "Disney+ (com.disney.disneyplus)."
+            )
+
+        // Range form because a large method can push p0 past the 4-bit
+        // register limit of a plain invoke-static.
+        contextHook.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p0 }, $CONTROLS->setContext(Landroid/content/Context;)V"
+        )
+
+        // 2. Capture every ExoPlayer as it is built.
+        val playerConstructors = ExoPlayerConstructorFingerprint.matchAllOrNull()
+            ?: throw PatchException(
+                "No androidx.media3 ExoPlayer implementation found. The app " +
+                    "has probably changed its media stack."
+            )
+
+        var hooked = 0
+
+        playerConstructors.forEach { match ->
+            val method = match.method
+
+            // The call has to land on the constructor's normal exit path.
+            //
+            // Not instruction 0: a constructor must reach its super
+            // constructor before `this` is usable, and handing a half-built
+            // object out fails dex verification.
+            //
+            // And not the last instruction either, which is what the first
+            // version of this patch did. media3's ExoPlayerImpl constructor
+            // ends with a fill-array-data payload - dex stores those after the
+            // code - and wraps its body in try/finally, so the tail of the
+            // method is a payload block and a catchall handler. Neither runs
+            // on a successful construction, which is why that build captured
+            // no player at all while every other hook worked.
+            //
+            // Every return-void is hooked rather than just the first, so an
+            // early exit path cannot slip through.
+            val returnIndices = method.implementation!!.instructions
+                .withIndex()
+                .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_VOID }
+                .map { (index, _) -> index }
+
+            // Reversed so the earlier indices stay valid as code is inserted.
+            returnIndices.asReversed().forEach { index ->
+                method.addInstruction(
+                    index,
+                    "invoke-static/range { p0 .. p0 }, " +
+                        "$PLAYER_BRIDGE->onPlayerCreated(Ljava/lang/Object;)V"
+                )
+                hooked++
+            }
+        }
+
+        if (hooked == 0) {
+            throw PatchException(
+                "Found ${playerConstructors.size} ExoPlayer constructor(s) but none had a " +
+                    "return-void to hook, so the speed control would silently do nothing."
+            )
+        }
+
+        // Disney+ creates this state exactly once when a native skip action
+        // becomes visible. Hook the state constructor instead of searching
+        // for a particular UI implementation or listener invocation.
+        DisneySkipStateFingerprint.methodOrNull?.let { stateMethod ->
+            val stateClass = stateMethod.definingClass
+            val constructor = Fingerprint(
+                name = "<init>",
+                returnType = "V",
+                parameters = listOf("Ljava/lang/String;", "Z", "J", "Z"),
+                custom = { _, classDef -> classDef.type == stateClass },
+            ).method
+
+            val returnIndices = constructor.implementation!!.instructions
+                .withIndex()
+                .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_VOID }
+                .map { (index, _) -> index }
+            if (returnIndices.isEmpty()) throw PatchException("Disney+ skip-state constructor has no return.")
+
+            returnIndices.asReversed().forEach { index ->
+                constructor.addInstruction(
+                    index,
+                    "invoke-static/range { p0 .. p0 }, " +
+                        "$CONTROLS->onNativeSkipState(Ljava/lang/Object;)V"
+                )
+            }
+        }
+    }
+}

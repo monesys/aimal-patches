@@ -1,8 +1,9 @@
 package app.aimal.patches.streaming
 
-import app.aimal.patches.viki.VIKI
-import app.aimal.patches.viki.VikiApplicationFingerprint
-import app.morphe.patcher.Fingerprint
+import app.aimal.patches.streaming.DisneyPlusMainActivityFingerprint
+import app.aimal.patches.streaming.DisneySkipStateFingerprint
+import app.aimal.patches.streaming.ExoPlayerConstructorFingerprint
+import app.aimal.patches.streaming.EXTENSION_STREAMING
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -43,25 +44,18 @@ val playbackControlsPatch = bytecodePatch(
     description = "Adds playback speed, aspect ratio and automatic intro-skip controls.",
     default = true,
 ) {
-    compatibleWith(HBO_MAX, DISNEY_PLUS, VIKI)
+    compatibleWith(DISNEY_PLUS)
 
     extendWith("extensions/extension.mpe")
 
     execute {
         // 1. Hand the extension a context.
-        //
-        // HBO Max and Viki declare their own Application.onCreate, which is the
-        // earliest and safest place. Disney+ does not - its Application
-        // inherits onCreate from an obfuscated base class - so its main
-        // Activity is used instead. Exactly one of these matches, depending on
-        // which app is being patched.
-        val contextHook = HboMaxApplicationFingerprint.methodOrNull
-            ?: DisneyPlusMainActivityFingerprint.methodOrNull
-            ?: VikiApplicationFingerprint.methodOrNull
+        // Disney+ does not declare its own Application.onCreate, so its main
+        // Activity is used instead.
+        val contextHook = DisneyPlusMainActivityFingerprint.methodOrNull
             ?: throw PatchException(
-                "Could not find a context hook. This patch targets HBO Max " +
-                    "(com.wbd.stream), Disney+ (com.disney.disneyplus) and " +
-                    "Viki (com.viki.android)."
+                "Could not find a context hook. This patch targets " +
+                    "Disney+ (com.disney.disneyplus)."
             )
 
         // Range form because a large method can push p0 past the 4-bit

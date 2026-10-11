@@ -66,3 +66,12 @@ internal object DisneySkipStateFingerprint : Fingerprint(
     returnType = "Ljava/lang/String;",
     strings = listOf("Show(label=", ", shouldRequestFocus=", ", skipPointMs=", ", isControlsVisible="),
 )
+
+/**
+ * Disney+ Apollo GraphQL ResponseAdapter for CheckQuery.
+ * Deserializes `operations` and `nextOperation` from the authentication backend.
+ */
+internal object DisneyCheckResponseAdapterFingerprint : Fingerprint(
+    name = "fromJson",
+    strings = listOf("operations", "nextOperation"),
+)

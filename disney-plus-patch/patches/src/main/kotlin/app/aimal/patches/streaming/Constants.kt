@@ -1,0 +1,26 @@
+package app.aimal.patches.streaming
+
+import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.AppTarget
+import app.morphe.patcher.patch.Compatibility
+
+val DISNEY_PLUS = Compatibility(
+    name = "Disney+",
+    packageName = "com.disney.disneyplus",
+    apkFileType = ApkFileType.APKM,
+    appIconColor = 0x0C204A,
+    targets = listOf(
+        // The Android TV release uses the same package and version name but a
+        // different version code (1787247370). It is not usable on phones:
+        // its navigation resources only exist under television qualifiers.
+        AppTarget(
+            version = "26.14.1+rc2-2026.08.20",
+            versionCode = 178724737,
+            description = "⚠️ Phone/tablet build only (versionCode 178724737). " +
+                "Do not use the Android TV build (versionCode 1787247370).",
+        ),
+        AppTarget(version = null, isExperimental = true),
+    )
+)
+
+internal const val EXTENSION_STREAMING = "Lapp/aimal/extension/streaming"
