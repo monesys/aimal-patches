@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-21T05:17:22",
-  "description": "## [1.2.1](https://github.com/monesys/aimal-patches/compare/v1.2.0...v1.2.1) (2026-09-21)\n\n\n### Bug Fixes\n\n* match Disney skip listener across invocation forms ([5b2a6d5](https://github.com/monesys/aimal-patches/commit/5b2a6d560457b74dd3aee82843910ad27309e22b))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.2.1/patches-1.2.1.mpp",
+  "created_at": "2026-09-21T05:23:03",
+  "description": "## [1.2.2](https://github.com/monesys/aimal-patches/compare/v1.2.1...v1.2.2) (2026-09-21)\n\n\n### Bug Fixes\n\n* hook Disney native skip state directly ([f1297ba](https://github.com/monesys/aimal-patches/commit/f1297baa234ed5d422d1e5f040aa7f9ab625e082))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.2.2/patches-1.2.2.mpp",
   "signature_download_url": "",
-  "version": "1.2.1"
+  "version": "1.2.2"
 }

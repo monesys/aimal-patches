@@ -421,7 +421,7 @@ final class ControlPanel extends LinearLayout {
     }
 
     private static String introSkipLabel() {
-        return Prefs.introSkip() ? "Intro ON" : "Intro OFF";
+        return Prefs.introSkip() ? "Skip ON" : "Skip OFF";
     }
 
     private static int clamp(int value, int min, int max) {
