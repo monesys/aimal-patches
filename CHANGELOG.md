@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/monesys/aimal-patches/compare/v1.3.1...v1.4.0) (2026-10-15)
+
+
+### Bug Fixes
+
+* **scd:** resolve merge conflict and fix DSL syntax in AyoomiInstantRewardsPatch ([ca03b7a](https://github.com/monesys/aimal-patches/commit/ca03b7af8409c4c3b0891c714df70dbb3eb52577))
+
+
+### Features
+
+* **scd:** add Ayoomi Instant Rewards patch for instant rewarded ad rewards ([a789eb9](https://github.com/monesys/aimal-patches/commit/a789eb9f9d44d27c2243a75a5dae4a7be9b1c224))
+* **scd:** add Ayoomi Instant Rewards patch for Serpent Chain Defense ([8f5430c](https://github.com/monesys/aimal-patches/commit/8f5430c0a6a5fb81be0a91f902a9132c772717ed))
+
 ## [1.3.1](https://github.com/monesys/aimal-patches/compare/v1.3.0...v1.3.1) (2026-10-11)
 
 

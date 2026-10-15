@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "patches": [
     {
       "name": "Aspect ratio control",
@@ -23,6 +23,32 @@
               "minSdk": null,
               "description": null
             },
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Ayoomi Instant Rewards",
+      "description": "Instantly grant ad rewards for games using Ayoomi SDK (Serpent Chain Defense, etc.) without watching ads or triggering AppLovin MAX 25-second timeouts.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.and.aym.scd",
+          "name": "Serpent Chain Defense",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#D4AF37",
+          "signatures": null,
+          "targets": [
             {
               "version": null,
               "versionCodes": null,

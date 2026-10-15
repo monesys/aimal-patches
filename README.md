@@ -56,7 +56,7 @@ resources are resolved under a phone configuration.
 ## Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.3.1](https://github.com/monesys/aimal-patches/releases/tag/v1.3.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;7 patches total
+> **[v1.4.0](https://github.com/monesys/aimal-patches/releases/tag/v1.4.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;8 patches total
 <details open>
 <summary>📦 Crunchyroll&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -71,6 +71,16 @@ resources are resolved under a phone configuration.
 | [Aspect ratio control](#aspect-ratio-control) | Adds a Fit/Stretch toggle to the player. |  |
 | [Playback speed](#playback-speed) | Unhides the player's speed menu and fills it out to 0.5x-2.0x. |  |
 | [Subtitle styling](#subtitle-styling) | Adds subtitle size, font and outline controls to the player. |  |
+
+</details>
+
+<details open>
+<summary>📦 Serpent Chain Defense&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Ayoomi Instant Rewards](#ayoomi-instant-rewards) | Instantly grant ad rewards for games using Ayoomi SDK (Serpent Chain Defense, etc.) without watching ads or triggering AppLovin MAX 25-second timeouts. |  |
 
 </details>
 
