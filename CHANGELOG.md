@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/monesys/aimal-patches/compare/v1.4.0...v1.4.1) (2026-10-15)
+
+
+### Bug Fixes
+
+* **scd:** add RewardAdIsReady gate bypass and fix listener null check ([a1e67ea](https://github.com/monesys/aimal-patches/commit/a1e67eade615d82f1c19a30eb05499f7ecfa4794))
+
 # [1.4.0](https://github.com/monesys/aimal-patches/compare/v1.3.1...v1.4.0) (2026-10-15)
 
 

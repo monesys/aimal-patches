@@ -85,10 +85,16 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             target.addInstructions(
                 0,
                 """
+<<<<<<< HEAD
                 move-object/from16 v0, p2
                 if-nez v0, :morphe_ayoomi_skip_grant
                 const-wide/high16 v1, 0x3ff0000000000000L
                 invoke-interface {v0, v1, v2}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
+=======
+                if-nez p2, :morphe_ayoomi_skip_grant
+                const-wide/high16 v0, 0x3ff0000000000000L
+                invoke-interface {p2, v0, v1}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
+>>>>>>> 8c0cfa2b3787ed196b67260e92fc45e3dd54157a
                 const/4 v0, 0x0
                 sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mRewardListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;
                 :morphe_ayoomi_skip_grant
@@ -99,15 +105,22 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             patched++
         }
 
+<<<<<<< HEAD
         // 4. Force InterstitialIsReady(String, Z)Z -> always true
         val intersReadyMethod = mutableClass.methods.firstOrNull {
             it.name == "InterstitialIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;", "Z")
+=======
+        // 4. Hook InterstitialIsReady to return false (silently block popups)
+        val intersReadyMethod = mutableClass.methods.firstOrNull {
+            it.name == "InterstitialIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;")
+>>>>>>> 8c0cfa2b3787ed196b67260e92fc45e3dd54157a
         }
         if (intersReadyMethod != null && intersReadyMethod.implementation != null) {
             val target = mutableClass.methods.first { it == intersReadyMethod }
             target.addInstructions(
                 0,
                 """
+<<<<<<< HEAD
                 const/4 v0, 0x1
                 return v0
                 """.trimIndent()
@@ -141,6 +154,13 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 """.trimIndent()
             )
             logger.info("Ayoomi Instant Rewards: patched ShowInterstitialAd to instantly complete callback")
+=======
+                const/4 v0, 0x0
+                return v0
+                """.trimIndent()
+            )
+            logger.info("Ayoomi Instant Rewards: patched InterstitialIsReady(String) to return false")
+>>>>>>> 8c0cfa2b3787ed196b67260e92fc45e3dd54157a
             patched++
         }
 
