@@ -1,7 +1,6 @@
 package app.aimal.patches.scd
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-<<<<<<< HEAD
 import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
@@ -18,26 +17,13 @@ val SERPENT_CHAIN_DEFENSE = Compatibility(
     ),
 )
 
-=======
-import app.morphe.patcher.patch.bytecodePatch
-import java.util.logging.Logger
-
->>>>>>> a789eb9f9d44d27c2243a75a5dae4a7be9b1c224
 @Suppress("unused")
 val ayoomiInstantRewardsPatch = bytecodePatch(
     name = "Ayoomi Instant Rewards",
     description = "Instantly grant ad rewards for games using Ayoomi SDK (Serpent Chain Defense, etc.) without watching ads or triggering AppLovin MAX 25-second timeouts.",
     default = true,
 ) {
-<<<<<<< HEAD
     compatibleWith(SERPENT_CHAIN_DEFENSE)
-=======
-    category("Featured")
-
-    compatiblePackages(
-        "com.and.aym.scd" to setOf(),
-    )
->>>>>>> a789eb9f9d44d27c2243a75a5dae4a7be9b1c224
 
     execute {
         val logger = Logger.getLogger(this::class.java.name)
