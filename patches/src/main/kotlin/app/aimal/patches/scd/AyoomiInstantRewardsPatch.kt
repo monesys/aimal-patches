@@ -37,12 +37,29 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
 
         var patched = 0
 
-        // 1. Force OriRewardIsReady()Z -> always true
+        // 1. Force RewardAdIsReady(String)Z -> always true
         val readyMethod = mutableClass.methods.firstOrNull {
-            it.name == "OriRewardIsReady" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+            it.name == "RewardAdIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;")
         }
         if (readyMethod != null && readyMethod.implementation != null) {
             val target = mutableClass.methods.first { it == readyMethod }
+            target.addInstructions(
+                0,
+                """
+                const/4 v0, 0x1
+                return v0
+                """.trimIndent()
+            )
+            logger.info("Ayoomi Instant Rewards: patched RewardAdIsReady(String) to return true")
+            patched++
+        }
+
+        // 2. Force OriRewardIsReady()Z -> always true
+        val oriReadyMethod = mutableClass.methods.firstOrNull {
+            it.name == "OriRewardIsReady" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+        }
+        if (oriReadyMethod != null && oriReadyMethod.implementation != null) {
+            val target = mutableClass.methods.first { it == oriReadyMethod }
             target.addInstructions(
                 0,
                 """
@@ -54,7 +71,7 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             patched++
         }
 
-        // 2. Hook ShowRewardVideoAd to immediately grant reward via callback
+        // 3. Hook ShowRewardVideoAd to immediately grant reward via callback
         val showMethod = mutableClass.methods.firstOrNull {
             it.name == "ShowRewardVideoAd" &&
                 it.parameterTypes == listOf(
@@ -68,16 +85,62 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             target.addInstructions(
                 0,
                 """
-                if-eqz p2, :morphe_ayoomi_no_listener
-                const-wide/high16 v0, 0x3ff0000000000000L
-                invoke-interface {p2, v0, v1}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
+                move-object/from16 v0, p2
+                if-nez v0, :morphe_ayoomi_skip_grant
+                const-wide/high16 v1, 0x3ff0000000000000L
+                invoke-interface {v0, v1, v2}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
                 const/4 v0, 0x0
                 sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mRewardListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;
+                :morphe_ayoomi_skip_grant
                 return-void
-                :morphe_ayoomi_no_listener
                 """.trimIndent()
             )
             logger.info("Ayoomi Instant Rewards: patched ShowRewardVideoAd to instantly grant reward")
+            patched++
+        }
+
+        // 4. Force InterstitialIsReady(String, Z)Z -> always true
+        val intersReadyMethod = mutableClass.methods.firstOrNull {
+            it.name == "InterstitialIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;", "Z")
+        }
+        if (intersReadyMethod != null && intersReadyMethod.implementation != null) {
+            val target = mutableClass.methods.first { it == intersReadyMethod }
+            target.addInstructions(
+                0,
+                """
+                const/4 v0, 0x1
+                return v0
+                """.trimIndent()
+            )
+            logger.info("Ayoomi Instant Rewards: patched InterstitialIsReady(String, Z) to return true")
+            patched++
+        }
+
+        // 5. Hook ShowInterstitialAd to immediately call onClosed() callback
+        val intersShowMethod = mutableClass.methods.firstOrNull {
+            it.name == "ShowInterstitialAd" &&
+                it.parameterTypes == listOf(
+                    "Ljava/lang/String;",
+                    "Landroid/app/Activity;",
+                    "Z",
+                    "Lcom/ayoomi/sdk/AyoomiApplication\$OnInterstitialListener;",
+                )
+        }
+        if (intersShowMethod != null && intersShowMethod.implementation != null) {
+            val target = mutableClass.methods.first { it == intersShowMethod }
+            target.addInstructions(
+                0,
+                """
+                move-object/from16 v0, p3
+                if-nez v0, :morphe_ayoomi_skip_inters
+                invoke-interface {v0}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;->onClosed()V
+                const/4 v0, 0x0
+                sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mInterstitialListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;
+                :morphe_ayoomi_skip_inters
+                return-void
+                """.trimIndent()
+            )
+            logger.info("Ayoomi Instant Rewards: patched ShowInterstitialAd to instantly complete callback")
             patched++
         }
 
