@@ -296,6 +296,51 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: patched AdapterMAX.InterstitialIsReady(Z) to return true")
                 patched++
             }
+
+            // Hook AdapterMAX.ShowRewardVideo(String) -> immediately invoke AyoomiApplication.mRewardListener
+            val maxShowReward = maxClass.methods.firstOrNull {
+                it.name == "ShowRewardVideo" && it.returnType == "V" && it.parameterTypes == listOf("Ljava/lang/String;")
+            }
+            if (maxShowReward != null && maxShowReward.implementation != null) {
+                val target = maxClass.methods.first { it == maxShowReward }
+                target.addInstructions(
+                    0,
+                    """
+                    sget-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mRewardListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;
+                    if-eqz v0, :morphe_max_skip_reward
+                    const-wide/high16 v1, 0x3ff0000000000000L
+                    invoke-interface {v0, v1, v2}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
+                    const/4 v0, 0x0
+                    sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mRewardListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;
+                    :morphe_max_skip_reward
+                    return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: patched AdapterMAX.ShowRewardVideo to instantly grant reward")
+                patched++
+            }
+
+            // Hook AdapterMAX.ShowInterstitialVideo(String, Z) -> immediately invoke AyoomiApplication.mInterstitialListener
+            val maxShowInters = maxClass.methods.firstOrNull {
+                it.name == "ShowInterstitialVideo" && it.returnType == "V" && it.parameterTypes == listOf("Ljava/lang/String;", "Z")
+            }
+            if (maxShowInters != null && maxShowInters.implementation != null) {
+                val target = maxClass.methods.first { it == maxShowInters }
+                target.addInstructions(
+                    0,
+                    """
+                    sget-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mInterstitialListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;
+                    if-eqz v0, :morphe_max_skip_inters
+                    invoke-interface {v0}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;->onClosed()V
+                    const/4 v0, 0x0
+                    sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mInterstitialListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;
+                    :morphe_max_skip_inters
+                    return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: patched AdapterMAX.ShowInterstitialVideo to instantly complete callback")
+                patched++
+            }
         }
 
         if (patched > 0) {
