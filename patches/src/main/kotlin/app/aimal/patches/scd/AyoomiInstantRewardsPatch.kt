@@ -505,14 +505,15 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             if (runMethod != null && runMethod.implementation != null) {
                 val target = pClass.methods.first { it == runMethod }
                 // In P0.run(), p0 is 'this'. Field 'a' is Semaphore. Release semaphore and return without destroying.
-                target.replaceInstructions(
-                    listOf(
-                        "iget-object v0, p0, Lcom/unity3d/player/P0;->a:Ljava/util/concurrent/Semaphore;",
-                        "if-eqz v0, :skip",
-                        "invoke-virtual {v0}, Ljava/util/concurrent/Semaphore;->release()V",
-                        ":skip",
-                        "return-void"
-                    )
+                target.addInstructions(
+                    0,
+                    """
+                        iget-object v0, p0, Lcom/unity3d/player/P0;->a:Ljava/util/concurrent/Semaphore;
+                        if-eqz v0, :skip
+                        invoke-virtual {v0}, Ljava/util/concurrent/Semaphore;->release()V
+                        :skip
+                        return-void
+                    """.trimIndent()
                 )
                 logger.info("Ayoomi Instant Rewards: neutered P0.run() pause shutdown")
                 patched++
