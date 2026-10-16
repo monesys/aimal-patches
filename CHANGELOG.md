@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/monesys/aimal-patches/compare/v1.4.1...v1.5.0) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** resolve merge conflict in AyoomiInstantRewardsPatch ([0ecdaa4](https://github.com/monesys/aimal-patches/commit/0ecdaa41c5d5a807da906826d0c111c9d02d08fc))
+
+
+### Features
+
+* **scd:** add Ayoomi Instant Rewards with readiness bypass and auto-complete callbacks ([acb35f7](https://github.com/monesys/aimal-patches/commit/acb35f775398003ea81170e2b9272a2178cc9852))
+
 ## [1.4.1](https://github.com/monesys/aimal-patches/compare/v1.4.0...v1.4.1) (2026-10-15)
 
 

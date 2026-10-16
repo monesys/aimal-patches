@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T16:39:17",
-  "description": "## [1.4.1](https://github.com/monesys/aimal-patches/compare/v1.4.0...v1.4.1) (2026-10-15)\n\n\n### Bug Fixes\n\n* **scd:** add RewardAdIsReady gate bypass and fix listener null check ([a1e67ea](https://github.com/monesys/aimal-patches/commit/a1e67eade615d82f1c19a30eb05499f7ecfa4794))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.4.1/patches-1.4.1.mpp",
+  "created_at": "2026-10-16T00:36:30",
+  "description": "# [1.5.0](https://github.com/monesys/aimal-patches/compare/v1.4.1...v1.5.0) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** resolve merge conflict in AyoomiInstantRewardsPatch ([0ecdaa4](https://github.com/monesys/aimal-patches/commit/0ecdaa41c5d5a807da906826d0c111c9d02d08fc))\n\n\n### Features\n\n* **scd:** add Ayoomi Instant Rewards with readiness bypass and auto-complete callbacks ([acb35f7](https://github.com/monesys/aimal-patches/commit/acb35f775398003ea81170e2b9272a2178cc9852))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.5.0/patches-1.5.0.mpp",
   "signature_download_url": "",
-  "version": "1.4.1"
+  "version": "1.5.0"
 }
