@@ -1,3 +1,10 @@
+## [1.11.5](https://github.com/monesys/aimal-patches/compare/v1.11.4...v1.11.5) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** neutralize FCMService requestNotificationPermission and mock hasNotificationPermission ([5d7a551](https://github.com/monesys/aimal-patches/commit/5d7a551eb804d3cd90977aaf1a278867a3da8084))
+
 ## [1.11.4](https://github.com/monesys/aimal-patches/compare/v1.11.3...v1.11.4) (2026-10-16)
 
 
