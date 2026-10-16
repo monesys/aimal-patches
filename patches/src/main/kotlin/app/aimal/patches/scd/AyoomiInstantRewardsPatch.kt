@@ -486,6 +486,18 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.kill()")
                 patched++
             }
+
+            // Neuter UnityPlayer.finish() to prevent Unity nativeRender failure or shutdown triggers from finishing the Activity
+            val finishMethod = unityPlayerClass.methods.firstOrNull {
+                it.name == "finish" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (finishMethod != null && finishMethod.implementation != null) {
+                val target = unityPlayerClass.methods.first { it == finishMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.finish()")
+                patched++
+            }
+
             val queueDestroyMethod = unityPlayerClass.methods.firstOrNull {
                 it.name == "queueDestroy" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
@@ -493,6 +505,20 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 val target = unityPlayerClass.methods.first { it == queueDestroyMethod }
                 target.addInstructions(0, "return-void")
                 logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.queueDestroy()")
+                patched++
+            }
+        }
+
+        // Also neuter UnityPlayerActivity.onDestroy / finish if applicable
+        val upActivityClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayerActivity;")
+        if (upActivityClass != null) {
+            val finishMethod = upActivityClass.methods.firstOrNull {
+                it.name == "finish" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (finishMethod != null && finishMethod.implementation != null) {
+                val target = upActivityClass.methods.first { it == finishMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayerActivity.finish()")
                 patched++
             }
         }
