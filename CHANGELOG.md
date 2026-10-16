@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/monesys/aimal-patches/compare/v1.9.0...v1.10.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** add Play Asset Delivery split source resolver for UnityDataAssetPack ([52bd467](https://github.com/monesys/aimal-patches/commit/52bd46788304becb3a7aa6ac7d2a5fa2e6e0e30e))
+
 # [1.9.0](https://github.com/monesys/aimal-patches/compare/v1.8.0...v1.9.0) (2026-10-16)
 
 
