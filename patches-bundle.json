@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T07:54:24",
-  "description": "## [1.10.1](https://github.com/monesys/aimal-patches/compare/v1.10.0...v1.10.1) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** remove out-of-range register bytecode from PAD getAssetPackPath to prevent VerifyError ([670abde](https://github.com/monesys/aimal-patches/commit/670abde530855ee25543ea82849e1bafa19c50a3))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.10.1/patches-1.10.1.mpp",
+  "created_at": "2026-10-16T08:03:53",
+  "description": "# [1.11.0](https://github.com/monesys/aimal-patches/compare/v1.10.1...v1.11.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** neuter ACTk CodeHashGenerator and UnityPlayer.kill to prevent anti-tamper aborts ([60237b6](https://github.com/monesys/aimal-patches/commit/60237b6de2a53efbca7ded3bd8c5b1e6cb2ead4c))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.0/patches-1.11.0.mpp",
   "signature_download_url": "",
-  "version": "1.10.1"
+  "version": "1.11.0"
 }

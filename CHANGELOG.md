@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/monesys/aimal-patches/compare/v1.10.1...v1.11.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** neuter ACTk CodeHashGenerator and UnityPlayer.kill to prevent anti-tamper aborts ([60237b6](https://github.com/monesys/aimal-patches/commit/60237b6de2a53efbca7ded3bd8c5b1e6cb2ead4c))
+
 ## [1.10.1](https://github.com/monesys/aimal-patches/compare/v1.10.0...v1.10.1) (2026-10-16)
 
 
