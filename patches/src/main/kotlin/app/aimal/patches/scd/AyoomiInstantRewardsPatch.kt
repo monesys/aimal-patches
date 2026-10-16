@@ -391,9 +391,31 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: patched PairIP performLocalInstallerCheck to return true")
                 patched++
             }
+
+            // 5. Neuter handleError(LicenseCheckException)
+            val handleErrorMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "handleError" && it.returnType == "V" && it.parameterTypes == listOf("Lcom/pairip/licensecheck/LicenseCheckException;")
+            }
+            if (handleErrorMethod != null && handleErrorMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == handleErrorMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.handleError()")
+                patched++
+            }
+
+            // 6. Neuter startErrorDialogActivity()
+            val startErrorMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "startErrorDialogActivity" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (startErrorMethod != null && startErrorMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == startErrorMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.startErrorDialogActivity()")
+                patched++
+            }
         }
 
-        // 5. Neuter PairIP Application.attachBaseContext license check
+        // 7. Neuter PairIP Application.attachBaseContext license check
         val pairipAppClass = mutableClassDefByOrNull("Lcom/pairip/application/Application;")
         if (pairipAppClass != null) {
             val attachMethod = pairipAppClass.methods.firstOrNull {
@@ -401,7 +423,6 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
             if (attachMethod != null && attachMethod.implementation != null) {
                 val target = pairipAppClass.methods.first { it == attachMethod }
-                // Replace body with simple invoke-super and return-void
                 target.addInstructions(
                     0,
                     """
@@ -410,6 +431,43 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                     """.trimIndent()
                 )
                 logger.info("Ayoomi Instant Rewards: bypassed PairIP Application.attachBaseContext()")
+                patched++
+            }
+        }
+
+        // 8. Neuter PairIP LicenseContentProvider.onCreate()
+        val providerClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseContentProvider;")
+        if (providerClass != null) {
+            val onCreateMethod = providerClass.methods.firstOrNull {
+                it.name == "onCreate" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+            }
+            if (onCreateMethod != null && onCreateMethod.implementation != null) {
+                val target = providerClass.methods.first { it == onCreateMethod }
+                target.addInstructions(0, "const/4 v0, 0x1\nreturn v0")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseContentProvider.onCreate()")
+                patched++
+            }
+        }
+
+        // 9. Neuter PairIP LicenseActivity.exitApp() and closeApp()
+        val licenseActivityClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseActivity;")
+        if (licenseActivityClass != null) {
+            val exitAppMethod = licenseActivityClass.methods.firstOrNull {
+                it.name == "exitApp" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (exitAppMethod != null && exitAppMethod.implementation != null) {
+                val target = licenseActivityClass.methods.first { it == exitAppMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.exitApp()")
+                patched++
+            }
+            val onStartMethod = licenseActivityClass.methods.firstOrNull {
+                it.name == "onStart" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (onStartMethod != null && onStartMethod.implementation != null) {
+                val target = licenseActivityClass.methods.first { it == onStartMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.onStart()")
                 patched++
             }
         }
