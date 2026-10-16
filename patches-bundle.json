@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T06:23:07",
-  "description": "# [1.8.0](https://github.com/monesys/aimal-patches/compare/v1.7.0...v1.8.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** add comprehensive PairIP license kill and shutdown bypass for non-root environments ([ccfdbce](https://github.com/monesys/aimal-patches/commit/ccfdbce56e2dc0957b7adbabc1543574d8d81199))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.8.0/patches-1.8.0.mpp",
+  "created_at": "2026-10-16T06:52:06",
+  "description": "# [1.9.0](https://github.com/monesys/aimal-patches/compare/v1.8.0...v1.9.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** add comprehensive crash killer neutralizer for LicenseContentProvider, LicenseActivity, and handleError ([131c5f4](https://github.com/monesys/aimal-patches/commit/131c5f47696dba63d39ed4b3296a55a0266c267c))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.9.0/patches-1.9.0.mpp",
   "signature_download_url": "",
-  "version": "1.8.0"
+  "version": "1.9.0"
 }

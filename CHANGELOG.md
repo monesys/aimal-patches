@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/monesys/aimal-patches/compare/v1.8.0...v1.9.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** add comprehensive crash killer neutralizer for LicenseContentProvider, LicenseActivity, and handleError ([131c5f4](https://github.com/monesys/aimal-patches/commit/131c5f47696dba63d39ed4b3296a55a0266c267c))
+
 # [1.8.0](https://github.com/monesys/aimal-patches/compare/v1.7.0...v1.8.0) (2026-10-16)
 
 
