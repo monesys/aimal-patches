@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/monesys/aimal-patches/compare/v1.11.0...v1.11.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** revert ACTk CodeHashGenerator neutering to prevent async coroutine hangs ([3f01377](https://github.com/monesys/aimal-patches/commit/3f01377447f5660c28015acf39b752b68cfd37c6))
+
 # [1.11.0](https://github.com/monesys/aimal-patches/compare/v1.10.1...v1.11.0) (2026-10-16)
 
 
