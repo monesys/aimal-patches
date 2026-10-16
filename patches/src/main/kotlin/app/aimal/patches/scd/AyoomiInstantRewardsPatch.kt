@@ -473,17 +473,48 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         }
 
         // ==========================================
-        // Part 7: Suppress Application.Quit in UnityPlayer
+        // Part 7: Suppress Application.Quit in UnityPlayer & Prevent Pause Shutdown
         // ==========================================
-        val unityPlayerClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayer;")
-        if (unityPlayerClass != null) {
-            val killMethod = unityPlayerClass.methods.firstOrNull {
+        val unityPlayerClasses = classes.filter { it.type == "Lcom/unity3d/player/UnityPlayer;" }
+        for (uClass in unityPlayerClasses) {
+            val killMethod = uClass.methods.firstOrNull {
                 it.name == "kill" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
             if (killMethod != null && killMethod.implementation != null) {
-                val target = unityPlayerClass.methods.first { it == killMethod }
+                val target = uClass.methods.first { it == killMethod }
                 target.addInstructions(0, "return-void")
                 logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.kill()")
+                patched++
+            }
+            val queueDestroyMethod = uClass.methods.firstOrNull {
+                it.name == "queueDestroy" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (queueDestroyMethod != null && queueDestroyMethod.implementation != null) {
+                val target = uClass.methods.first { it == queueDestroyMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.queueDestroy()")
+                patched++
+            }
+        }
+
+        val p0Classes = classes.filter { it.type == "Lcom/unity3d/player/P0;" }
+        for (pClass in p0Classes) {
+            val runMethod = pClass.methods.firstOrNull {
+                it.name == "run" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (runMethod != null && runMethod.implementation != null) {
+                val target = pClass.methods.first { it == runMethod }
+                // In P0.run(), p0 is 'this'. Field 'a' is Semaphore. Release semaphore and return without destroying.
+                target.replaceInstructions(
+                    listOf(
+                        "iget-object v0, p0, Lcom/unity3d/player/P0;->a:Ljava/util/concurrent/Semaphore;",
+                        "if-eqz v0, :skip",
+                        "invoke-virtual {v0}, Ljava/util/concurrent/Semaphore;->release()V",
+                        ":skip",
+                        "return-void"
+                    )
+                )
+                logger.info("Ayoomi Instant Rewards: neutered P0.run() pause shutdown")
                 patched++
             }
         }
