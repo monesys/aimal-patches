@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T12:21:09",
-  "description": "## [1.11.6](https://github.com/monesys/aimal-patches/compare/v1.11.5...v1.11.6) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** hook AyoomiApplication.GetInitState for instant callback to unfreeze loading loop ([cd1287b](https://github.com/monesys/aimal-patches/commit/cd1287b9adb84a576a218d035b461007ef9c10ca))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.6/patches-1.11.6.mpp",
+  "created_at": "2026-10-16T13:06:24",
+  "description": "## [1.11.7](https://github.com/monesys/aimal-patches/compare/v1.11.6...v1.11.7) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** redirect Play Asset Delivery getAssetPackPath to base.apk for non-root loading ([8008135](https://github.com/monesys/aimal-patches/commit/8008135330f1463cf2cdcfea5d103bd5ed1ec3cf))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.7/patches-1.11.7.mpp",
   "signature_download_url": "",
-  "version": "1.11.6"
+  "version": "1.11.7"
 }

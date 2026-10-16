@@ -1,3 +1,10 @@
+## [1.11.7](https://github.com/monesys/aimal-patches/compare/v1.11.6...v1.11.7) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** redirect Play Asset Delivery getAssetPackPath to base.apk for non-root loading ([8008135](https://github.com/monesys/aimal-patches/commit/8008135330f1463cf2cdcfea5d103bd5ed1ec3cf))
+
 ## [1.11.6](https://github.com/monesys/aimal-patches/compare/v1.11.5...v1.11.6) (2026-10-16)
 
 
