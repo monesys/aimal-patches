@@ -624,6 +624,66 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
         }
 
+        // ==========================================
+        // Part 8: Play Asset Delivery (PAD) & Base APK Path Redirect (for S24 Non-Root)
+        // ==========================================
+        // Fixes the infinite loading loop where Unity queries Google Play Core for "UnityDataAssetPack"
+        // and hangs on onError(-2) (PACK_UNAVAILABLE).
+        // Since all YooAsset bundles are merged inside base.apk, redirect getAssetPackPath directly to base.apk.
+        val padWrapperClass = mutableClassDefByOrNull("Lcom/unity3d/player/PlayAssetDeliveryUnityWrapper;")
+        if (padWrapperClass != null) {
+            val getPathMethod = padWrapperClass.methods.firstOrNull {
+                it.name == "getAssetPackPath" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
+            }
+            if (getPathMethod != null && getPathMethod.implementation != null) {
+                val target = padWrapperClass.methods.first { it == getPathMethod }
+                target.addInstructions(
+                    0,
+                    """
+                        invoke-static {}, Lcom/ayoomi/sdk/OkApplication;->get()Landroid/app/Application;
+                        move-result-object v0
+                        if-eqz v0, :morphe_pad_base_fallback
+                        invoke-virtual {v0}, Landroid/app/Application;->getPackageCodePath()Ljava/lang/String;
+                        move-result-object v0
+                        if-eqz v0, :morphe_pad_base_fallback
+                        return-object v0
+                        :morphe_pad_base_fallback
+                        const-string v0, ""
+                        return-object v0
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: redirected PlayAssetDeliveryUnityWrapper.getAssetPackPath to base.apk")
+                patched++
+            }
+        }
+
+        val playerNClass = mutableClassDefByOrNull("Lcom/unity3d/player/n;")
+        if (playerNClass != null) {
+            val aMethod = playerNClass.methods.firstOrNull {
+                it.name == "a" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
+            }
+            if (aMethod != null && aMethod.implementation != null) {
+                val target = playerNClass.methods.first { it == aMethod }
+                target.addInstructions(
+                    0,
+                    """
+                        invoke-static {}, Lcom/ayoomi/sdk/OkApplication;->get()Landroid/app/Application;
+                        move-result-object v0
+                        if-eqz v0, :morphe_n_base_fallback
+                        invoke-virtual {v0}, Landroid/app/Application;->getPackageCodePath()Ljava/lang/String;
+                        move-result-object v0
+                        if-eqz v0, :morphe_n_base_fallback
+                        return-object v0
+                        :morphe_n_base_fallback
+                        const-string v0, ""
+                        return-object v0
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: redirected com.unity3d.player.n.a(String) to base.apk")
+                patched++
+            }
+        }
+
         if (patched > 0) {
             logger.info("Ayoomi Instant Rewards: successfully applied $patched patch(es)")
         } else {
