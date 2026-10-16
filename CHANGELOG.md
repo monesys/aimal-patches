@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/monesys/aimal-patches/compare/v1.5.0...v1.5.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** invert null check branch to properly invoke reward and interstitial callbacks ([749e69a](https://github.com/monesys/aimal-patches/commit/749e69a5ceb2c7b28e8a275b0b18d70e02392486))
+
 # [1.5.0](https://github.com/monesys/aimal-patches/compare/v1.4.1...v1.5.0) (2026-10-16)
 
 
