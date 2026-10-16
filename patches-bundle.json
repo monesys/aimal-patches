@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T02:57:47",
-  "description": "# [1.7.0](https://github.com/monesys/aimal-patches/compare/v1.6.0...v1.7.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** add direct reward callback hooks to AdapterMAX ShowRewardVideo and ShowInterstitialVideo ([ef58182](https://github.com/monesys/aimal-patches/commit/ef58182ca49b616480e1bfe7753ccd99f3f5295b))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.7.0/patches-1.7.0.mpp",
+  "created_at": "2026-10-16T06:23:07",
+  "description": "# [1.8.0](https://github.com/monesys/aimal-patches/compare/v1.7.0...v1.8.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** add comprehensive PairIP license kill and shutdown bypass for non-root environments ([ccfdbce](https://github.com/monesys/aimal-patches/commit/ccfdbce56e2dc0957b7adbabc1543574d8d81199))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.8.0/patches-1.8.0.mpp",
   "signature_download_url": "",
-  "version": "1.7.0"
+  "version": "1.8.0"
 }

@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/monesys/aimal-patches/compare/v1.7.0...v1.8.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** add comprehensive PairIP license kill and shutdown bypass for non-root environments ([ccfdbce](https://github.com/monesys/aimal-patches/commit/ccfdbce56e2dc0957b7adbabc1543574d8d81199))
+
 # [1.7.0](https://github.com/monesys/aimal-patches/compare/v1.6.0...v1.7.0) (2026-10-16)
 
 
