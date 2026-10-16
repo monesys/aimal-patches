@@ -343,6 +343,77 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
         }
 
+        // ==========================================
+        // Part 4: Complete PairIP License Check & Crash Killer Bypass (for Non-Root / Galaxy S24)
+        // ==========================================
+        // 1. Neuter PairIP LicenseClient.checkLicense(Context) root trigger
+        val licenseClientClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseClient;")
+        if (licenseClientClass != null) {
+            val checkLicenseMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "checkLicense" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/content/Context;")
+            }
+            if (checkLicenseMethod != null && checkLicenseMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == checkLicenseMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.checkLicense()")
+                patched++
+            }
+
+            // 2. Neuter initializeLicenseCheck()
+            val initCheckMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "initializeLicenseCheck" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (initCheckMethod != null && initCheckMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == initCheckMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.initializeLicenseCheck()")
+                patched++
+            }
+
+            // 3. Neuter scheduleAppShutdown()
+            val shutdownMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "scheduleAppShutdown" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (shutdownMethod != null && shutdownMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == shutdownMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.scheduleAppShutdown()")
+                patched++
+            }
+
+            // 4. Force performLocalInstallerCheck()Z -> return true
+            val localCheckMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "performLocalInstallerCheck" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+            }
+            if (localCheckMethod != null && localCheckMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == localCheckMethod }
+                target.addInstructions(0, "const/4 v0, 0x1\nreturn v0")
+                logger.info("Ayoomi Instant Rewards: patched PairIP performLocalInstallerCheck to return true")
+                patched++
+            }
+        }
+
+        // 5. Neuter PairIP Application.attachBaseContext license check
+        val pairipAppClass = mutableClassDefByOrNull("Lcom/pairip/application/Application;")
+        if (pairipAppClass != null) {
+            val attachMethod = pairipAppClass.methods.firstOrNull {
+                it.name == "attachBaseContext" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/content/Context;")
+            }
+            if (attachMethod != null && attachMethod.implementation != null) {
+                val target = pairipAppClass.methods.first { it == attachMethod }
+                // Replace body with simple invoke-super and return-void
+                target.addInstructions(
+                    0,
+                    """
+                    invoke-super {p0, p1}, Lcom/pairip/application/Application;->attachBaseContext(Landroid/content/Context;)V
+                    return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: bypassed PairIP Application.attachBaseContext()")
+                patched++
+            }
+        }
+
         if (patched > 0) {
             logger.info("Ayoomi Instant Rewards: successfully applied $patched patch(es)")
         } else {
