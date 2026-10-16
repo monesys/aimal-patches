@@ -475,46 +475,8 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         // ==========================================
         // Part 5: Play Asset Delivery (PAD) & Unity Split APK Resolver (for S24 Non-Root)
         // ==========================================
-        // Fixes the crash where Unity cannot find "UnityDataAssetPack" because Google Play Core
-        // fails to query sideloaded/re-signed split APKs outside of the Google Play Store.
         val padWrapperClass = mutableClassDefByOrNull("Lcom/unity3d/player/PlayAssetDeliveryUnityWrapper;")
         if (padWrapperClass != null) {
-            val getPathMethod = padWrapperClass.methods.firstOrNull {
-                it.name == "getAssetPackPath" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
-            }
-            if (getPathMethod != null && getPathMethod.implementation != null) {
-                val target = padWrapperClass.methods.first { it == getPathMethod }
-                target.addInstructions(
-                    0,
-                    """
-                    invoke-static {}, Lcom/ayoomi/sdk/OkApplication;->get()Landroid/app/Application;
-                    move-result-object v0
-                    if-eqz v0, :morphe_pad_fallback
-                    invoke-virtual {v0}, Landroid/app/Application;->getApplicationInfo()Landroid/content/pm/ApplicationInfo;
-                    move-result-object v0
-                    if-eqz v0, :morphe_pad_fallback
-                    iget-object v0, v0, Landroid/content/pm/ApplicationInfo;->splitSourceDirs:[Ljava/lang/String;
-                    if-eqz v0, :morphe_pad_fallback
-                    array-length v1, v0
-                    const/4 v2, 0x0
-                    :morphe_loop_start
-                    if-ge v2, v1, :morphe_pad_fallback
-                    aget-object v3, v0, v2
-                    if-eqz v3, :morphe_loop_next
-                    invoke-virtual {v3, p1}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
-                    move-result v4
-                    if-eqz v4, :morphe_loop_next
-                    return-object v3
-                    :morphe_loop_next
-                    add-int/lit8 v2, v2, 0x1
-                    goto :morphe_loop_start
-                    :morphe_pad_fallback
-                    """.trimIndent()
-                )
-                logger.info("Ayoomi Instant Rewards: patched PlayAssetDeliveryUnityWrapper.getAssetPackPath to resolve split APKs")
-                patched++
-            }
-
             val playCoreMissingMethod = padWrapperClass.methods.firstOrNull {
                 it.name == "playCoreApiMissing" && it.returnType == "Z" && it.parameterTypes.isEmpty()
             }
@@ -522,46 +484,6 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 val target = padWrapperClass.methods.first { it == playCoreMissingMethod }
                 target.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
                 logger.info("Ayoomi Instant Rewards: patched PlayAssetDeliveryUnityWrapper.playCoreApiMissing to return false")
-                patched++
-            }
-        }
-
-        // Also patch com.unity3d.player.n.a(String) fallback directly
-        val playerNClass = mutableClassDefByOrNull("Lcom/unity3d/player/n;")
-        if (playerNClass != null) {
-            val aMethod = playerNClass.methods.firstOrNull {
-                it.name == "a" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
-            }
-            if (aMethod != null && aMethod.implementation != null) {
-                val target = playerNClass.methods.first { it == aMethod }
-                target.addInstructions(
-                    0,
-                    """
-                    invoke-static {}, Lcom/ayoomi/sdk/OkApplication;->get()Landroid/app/Application;
-                    move-result-object v0
-                    if-eqz v0, :morphe_n_fallback
-                    invoke-virtual {v0}, Landroid/app/Application;->getApplicationInfo()Landroid/content/pm/ApplicationInfo;
-                    move-result-object v0
-                    if-eqz v0, :morphe_n_fallback
-                    iget-object v0, v0, Landroid/content/pm/ApplicationInfo;->splitSourceDirs:[Ljava/lang/String;
-                    if-eqz v0, :morphe_n_fallback
-                    array-length v1, v0
-                    const/4 v2, 0x0
-                    :morphe_n_loop_start
-                    if-ge v2, v1, :morphe_n_fallback
-                    aget-object v3, v0, v2
-                    if-eqz v3, :morphe_n_loop_next
-                    invoke-virtual {v3, p1}, Ljava/lang/String;->contains(Ljava/lang/CharSequence;)Z
-                    move-result v4
-                    if-eqz v4, :morphe_n_loop_next
-                    return-object v3
-                    :morphe_n_loop_next
-                    add-int/lit8 v2, v2, 0x1
-                    goto :morphe_n_loop_start
-                    :morphe_n_fallback
-                    """.trimIndent()
-                )
-                logger.info("Ayoomi Instant Rewards: patched com.unity3d.player.n.a(String) to resolve split APKs")
                 patched++
             }
         }
