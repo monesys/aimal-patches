@@ -1,3 +1,10 @@
+## [1.11.4](https://github.com/monesys/aimal-patches/compare/v1.11.3...v1.11.4) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** neutralize pauseJavaAndCallUnloadCallback, onUnityPlayerUnloaded and moveTaskToBack ([d295337](https://github.com/monesys/aimal-patches/commit/d29533710ba1fe96a26a8bd393ac13a0df84394b))
+
 ## [1.11.3](https://github.com/monesys/aimal-patches/compare/v1.11.2...v1.11.3) (2026-10-16)
 
 
