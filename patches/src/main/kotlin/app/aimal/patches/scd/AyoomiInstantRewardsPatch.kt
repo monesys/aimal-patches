@@ -507,9 +507,20 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.queueDestroy()")
                 patched++
             }
+
+            // Neuter pauseJavaAndCallUnloadCallback() to prevent moveTaskToBack on unload trigger
+            val unloadMethod = unityPlayerClass.methods.firstOrNull {
+                it.name == "pauseJavaAndCallUnloadCallback" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (unloadMethod != null && unloadMethod.implementation != null) {
+                val target = unityPlayerClass.methods.first { it == unloadMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.pauseJavaAndCallUnloadCallback()")
+                patched++
+            }
         }
 
-        // Also neuter UnityPlayerActivity.onDestroy / finish if applicable
+        // Also neuter UnityPlayerActivity.onDestroy / finish / moveTaskToBack / onUnityPlayerUnloaded
         val upActivityClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayerActivity;")
         if (upActivityClass != null) {
             val finishMethod = upActivityClass.methods.firstOrNull {
@@ -519,6 +530,26 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 val target = upActivityClass.methods.first { it == finishMethod }
                 target.addInstructions(0, "return-void")
                 logger.info("Ayoomi Instant Rewards: neutered UnityPlayerActivity.finish()")
+                patched++
+            }
+
+            val unloadCallback = upActivityClass.methods.firstOrNull {
+                it.name == "onUnityPlayerUnloaded" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (unloadCallback != null && unloadCallback.implementation != null) {
+                val target = upActivityClass.methods.first { it == unloadCallback }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayerActivity.onUnityPlayerUnloaded()")
+                patched++
+            }
+
+            val moveTaskMethod = upActivityClass.methods.firstOrNull {
+                it.name == "moveTaskToBack" && it.returnType == "Z" && it.parameterTypes == listOf("Z")
+            }
+            if (moveTaskMethod != null && moveTaskMethod.implementation != null) {
+                val target = upActivityClass.methods.first { it == moveTaskMethod }
+                target.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayerActivity.moveTaskToBack()")
                 patched++
             }
         }
