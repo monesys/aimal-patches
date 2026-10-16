@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T01:16:27",
-  "description": "## [1.5.1](https://github.com/monesys/aimal-patches/compare/v1.5.0...v1.5.1) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** invert null check branch to properly invoke reward and interstitial callbacks ([749e69a](https://github.com/monesys/aimal-patches/commit/749e69a5ceb2c7b28e8a275b0b18d70e02392486))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.5.1/patches-1.5.1.mpp",
+  "created_at": "2026-10-16T01:35:45",
+  "description": "# [1.6.0](https://github.com/monesys/aimal-patches/compare/v1.5.1...v1.6.0) (2026-10-16)\n\n\n### Features\n\n* **scd:** add AyoomiUnity direct callback hooks and AdapterMAX readiness bypass ([bc87096](https://github.com/monesys/aimal-patches/commit/bc87096b654cabadbc2f20328e018c0a8d127c4e))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.6.0/patches-1.6.0.mpp",
   "signature_download_url": "",
-  "version": "1.5.1"
+  "version": "1.6.0"
 }

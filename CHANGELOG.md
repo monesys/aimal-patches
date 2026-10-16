@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/monesys/aimal-patches/compare/v1.5.1...v1.6.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** add AyoomiUnity direct callback hooks and AdapterMAX readiness bypass ([bc87096](https://github.com/monesys/aimal-patches/commit/bc87096b654cabadbc2f20328e018c0a8d127c4e))
+
 ## [1.5.1](https://github.com/monesys/aimal-patches/compare/v1.5.0...v1.5.1) (2026-10-16)
 
 
