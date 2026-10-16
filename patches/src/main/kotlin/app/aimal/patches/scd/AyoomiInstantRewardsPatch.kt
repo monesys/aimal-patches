@@ -577,6 +577,31 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
         }
 
+        // Fix infinite loading loop in AyoomiApplication.GetInitState() (AyoomiApplication$4.run)
+        // Ensure AyoomiApplication.isInitAdj is true, or immediate callback dispatch
+        val ayoomiAppClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/AyoomiApplication;")
+        if (ayoomiAppClass != null) {
+            val getInitStateMethod = ayoomiAppClass.methods.firstOrNull {
+                it.name == "GetInitState" && it.returnType == "V" && it.parameterTypes == listOf("Lcom/ayoomi/sdk/OnAyoomiInitedListener;")
+            }
+            if (getInitStateMethod != null && getInitStateMethod.implementation != null) {
+                val target = ayoomiAppClass.methods.first { it == getInitStateMethod }
+                // Immediately dispatch onAyoomiInited with ayoomiData instead of spawning the polling thread
+                target.addInstructions(
+                    0,
+                    """
+                        if-eqz p0, :skip_callback
+                        sget-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->ayoomiData:Lcom/ayoomi/sdk/AyoomiData;
+                        invoke-interface {p0, v0}, Lcom/ayoomi/sdk/OnAyoomiInitedListener;->onAyoomiInited(Lcom/ayoomi/sdk/AyoomiData;)V
+                        :skip_callback
+                        return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: hooked AyoomiApplication.GetInitState() for instant callback")
+                patched++
+            }
+        }
+
         val p0Class = mutableClassDefByOrNull("Lcom/unity3d/player/P0;")
         if (p0Class != null) {
             val runMethod = p0Class.methods.firstOrNull {
