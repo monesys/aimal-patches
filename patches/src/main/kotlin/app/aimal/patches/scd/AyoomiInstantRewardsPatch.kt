@@ -473,17 +473,33 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         }
 
         // ==========================================
-        // Part 5: Play Asset Delivery (PAD) & Unity Split APK Resolver (for S24 Non-Root)
+        // Part 6: Neuter Anti-Cheat Toolkit (ACTk) CodeHash / Genuine Tamper Verification
         // ==========================================
-        val padWrapperClass = mutableClassDefByOrNull("Lcom/unity3d/player/PlayAssetDeliveryUnityWrapper;")
-        if (padWrapperClass != null) {
-            val playCoreMissingMethod = padWrapperClass.methods.firstOrNull {
-                it.name == "playCoreApiMissing" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+        val actkClass = mutableClassDefByOrNull("Lnet/codestage/actk/androidnative/CodeHashGenerator;")
+        if (actkClass != null) {
+            val getCodeHashMethod = actkClass.methods.firstOrNull {
+                it.name == "GetCodeHash" && it.returnType == "V" && it.parameterTypes == listOf("[Ljava/lang/String;", "Lnet/codestage/actk/androidnative/CodeHashCallback;")
             }
-            if (playCoreMissingMethod != null && playCoreMissingMethod.implementation != null) {
-                val target = padWrapperClass.methods.first { it == playCoreMissingMethod }
-                target.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
-                logger.info("Ayoomi Instant Rewards: patched PlayAssetDeliveryUnityWrapper.playCoreApiMissing to return false")
+            if (getCodeHashMethod != null && getCodeHashMethod.implementation != null) {
+                val target = actkClass.methods.first { it == getCodeHashMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered ACTk CodeHashGenerator.GetCodeHash()")
+                patched++
+            }
+        }
+
+        // ==========================================
+        // Part 7: Suppress Application.Quit in UnityPlayer
+        // ==========================================
+        val unityPlayerClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayer;")
+        if (unityPlayerClass != null) {
+            val killMethod = unityPlayerClass.methods.firstOrNull {
+                it.name == "kill" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (killMethod != null && killMethod.implementation != null) {
+                val target = unityPlayerClass.methods.first { it == killMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered UnityPlayer.kill()")
                 patched++
             }
         }
