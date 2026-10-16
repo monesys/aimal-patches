@@ -473,22 +473,6 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         }
 
         // ==========================================
-        // Part 6: Neuter Anti-Cheat Toolkit (ACTk) CodeHash / Genuine Tamper Verification
-        // ==========================================
-        val actkClass = mutableClassDefByOrNull("Lnet/codestage/actk/androidnative/CodeHashGenerator;")
-        if (actkClass != null) {
-            val getCodeHashMethod = actkClass.methods.firstOrNull {
-                it.name == "GetCodeHash" && it.returnType == "V" && it.parameterTypes == listOf("[Ljava/lang/String;", "Lnet/codestage/actk/androidnative/CodeHashCallback;")
-            }
-            if (getCodeHashMethod != null && getCodeHashMethod.implementation != null) {
-                val target = actkClass.methods.first { it == getCodeHashMethod }
-                target.addInstructions(0, "return-void")
-                logger.info("Ayoomi Instant Rewards: neutered ACTk CodeHashGenerator.GetCodeHash()")
-                patched++
-            }
-        }
-
-        // ==========================================
         // Part 7: Suppress Application.Quit in UnityPlayer
         // ==========================================
         val unityPlayerClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayer;")
