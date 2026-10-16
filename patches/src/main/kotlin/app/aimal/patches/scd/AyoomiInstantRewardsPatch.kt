@@ -554,6 +554,29 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
         }
 
+        // Neuter FCMService.requestNotificationPermission to prevent PermissionController dialog from popping up and backgrounding the activity
+        val fcmClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/FCMService;")
+        if (fcmClass != null) {
+            val reqPermMethod = fcmClass.methods.firstOrNull {
+                it.name == "requestNotificationPermission" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/app/Activity;")
+            }
+            if (reqPermMethod != null && reqPermMethod.implementation != null) {
+                val target = fcmClass.methods.first { it == reqPermMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered FCMService.requestNotificationPermission()")
+                patched++
+            }
+            val hasPermMethod = fcmClass.methods.firstOrNull {
+                it.name == "hasNotificationPermission" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+            }
+            if (hasPermMethod != null && hasPermMethod.implementation != null) {
+                val target = fcmClass.methods.first { it == hasPermMethod }
+                target.addInstructions(0, "const/4 v0, 0x1\nreturn v0")
+                logger.info("Ayoomi Instant Rewards: mocked FCMService.hasNotificationPermission() -> true")
+                patched++
+            }
+        }
+
         val p0Class = mutableClassDefByOrNull("Lcom/unity3d/player/P0;")
         if (p0Class != null) {
             val runMethod = p0Class.methods.firstOrNull {
