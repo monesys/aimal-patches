@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/monesys/aimal-patches/compare/v1.10.0...v1.10.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** remove out-of-range register bytecode from PAD getAssetPackPath to prevent VerifyError ([670abde](https://github.com/monesys/aimal-patches/commit/670abde530855ee25543ea82849e1bafa19c50a3))
+
 # [1.10.0](https://github.com/monesys/aimal-patches/compare/v1.9.0...v1.10.0) (2026-10-16)
 
 
