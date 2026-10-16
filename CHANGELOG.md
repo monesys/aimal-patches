@@ -1,3 +1,12 @@
+## [1.11.2](https://github.com/monesys/aimal-patches/compare/v1.11.1...v1.11.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** neutralize UnityPlayer.queueDestroy and P0.run pause shutdown ([5eb6ba1](https://github.com/monesys/aimal-patches/commit/5eb6ba1f0df821a4f1d92c842387e71bf376f909))
+* **scd:** resolve mutableClassDefByOrNull for UnityPlayer and P0 ([1cc847f](https://github.com/monesys/aimal-patches/commit/1cc847f213791abe2ed94cc474d3ed08b7ebc96d))
+* **scd:** use addInstructions for P0.run instruction insertion ([605d940](https://github.com/monesys/aimal-patches/commit/605d9408a0b33674cc6a226ed21785cd0250ebbc))
+
 ## [1.11.1](https://github.com/monesys/aimal-patches/compare/v1.11.0...v1.11.1) (2026-10-16)
 
 

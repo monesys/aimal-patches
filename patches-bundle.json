@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T10:35:02",
-  "description": "## [1.11.1](https://github.com/monesys/aimal-patches/compare/v1.11.0...v1.11.1) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** revert ACTk CodeHashGenerator neutering to prevent async coroutine hangs ([3f01377](https://github.com/monesys/aimal-patches/commit/3f01377447f5660c28015acf39b752b68cfd37c6))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.1/patches-1.11.1.mpp",
+  "created_at": "2026-10-16T11:06:13",
+  "description": "## [1.11.2](https://github.com/monesys/aimal-patches/compare/v1.11.1...v1.11.2) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** neutralize UnityPlayer.queueDestroy and P0.run pause shutdown ([5eb6ba1](https://github.com/monesys/aimal-patches/commit/5eb6ba1f0df821a4f1d92c842387e71bf376f909))\n* **scd:** resolve mutableClassDefByOrNull for UnityPlayer and P0 ([1cc847f](https://github.com/monesys/aimal-patches/commit/1cc847f213791abe2ed94cc474d3ed08b7ebc96d))\n* **scd:** use addInstructions for P0.run instruction insertion ([605d940](https://github.com/monesys/aimal-patches/commit/605d9408a0b33674cc6a226ed21785cd0250ebbc))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.2/patches-1.11.2.mpp",
   "signature_download_url": "",
-  "version": "1.11.1"
+  "version": "1.11.2"
 }
