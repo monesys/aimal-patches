@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T11:56:53",
-  "description": "## [1.11.5](https://github.com/monesys/aimal-patches/compare/v1.11.4...v1.11.5) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** neutralize FCMService requestNotificationPermission and mock hasNotificationPermission ([5d7a551](https://github.com/monesys/aimal-patches/commit/5d7a551eb804d3cd90977aaf1a278867a3da8084))",
-  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.5/patches-1.11.5.mpp",
+  "created_at": "2026-10-16T12:21:09",
+  "description": "## [1.11.6](https://github.com/monesys/aimal-patches/compare/v1.11.5...v1.11.6) (2026-10-16)\n\n\n### Bug Fixes\n\n* **scd:** hook AyoomiApplication.GetInitState for instant callback to unfreeze loading loop ([cd1287b](https://github.com/monesys/aimal-patches/commit/cd1287b9adb84a576a218d035b461007ef9c10ca))",
+  "download_url": "https://github.com/monesys/aimal-patches/releases/download/v1.11.6/patches-1.11.6.mpp",
   "signature_download_url": "",
-  "version": "1.11.5"
+  "version": "1.11.6"
 }

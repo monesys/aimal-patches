@@ -1,3 +1,10 @@
+## [1.11.6](https://github.com/monesys/aimal-patches/compare/v1.11.5...v1.11.6) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** hook AyoomiApplication.GetInitState for instant callback to unfreeze loading loop ([cd1287b](https://github.com/monesys/aimal-patches/commit/cd1287b9adb84a576a218d035b461007ef9c10ca))
+
 ## [1.11.5](https://github.com/monesys/aimal-patches/compare/v1.11.4...v1.11.5) (2026-10-16)
 
 
