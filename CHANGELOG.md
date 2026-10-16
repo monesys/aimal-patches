@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/monesys/aimal-patches/compare/v1.6.0...v1.7.0) (2026-10-16)
+
+
+### Features
+
+* **scd:** add direct reward callback hooks to AdapterMAX ShowRewardVideo and ShowInterstitialVideo ([ef58182](https://github.com/monesys/aimal-patches/commit/ef58182ca49b616480e1bfe7753ccd99f3f5295b))
+
 # [1.6.0](https://github.com/monesys/aimal-patches/compare/v1.5.1...v1.6.0) (2026-10-16)
 
 
