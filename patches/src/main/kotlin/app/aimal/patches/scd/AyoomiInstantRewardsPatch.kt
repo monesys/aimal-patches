@@ -86,7 +86,7 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 0,
                 """
                 move-object/from16 v0, p2
-                if-nez v0, :morphe_ayoomi_skip_grant
+                if-eqz v0, :morphe_ayoomi_skip_grant
                 const-wide/high16 v1, 0x3ff0000000000000L
                 invoke-interface {v0, v1, v2}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnRewardListener;->onReward(D)V
                 const/4 v0, 0x0
@@ -132,7 +132,7 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 0,
                 """
                 move-object/from16 v0, p3
-                if-nez v0, :morphe_ayoomi_skip_inters
+                if-eqz v0, :morphe_ayoomi_skip_inters
                 invoke-interface {v0}, Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;->onClosed()V
                 const/4 v0, 0x0
                 sput-object v0, Lcom/ayoomi/sdk/AyoomiApplication;->mInterstitialListener:Lcom/ayoomi/sdk/AyoomiApplication${'$'}OnInterstitialListener;
