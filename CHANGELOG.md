@@ -1,3 +1,10 @@
+## [1.11.3](https://github.com/monesys/aimal-patches/compare/v1.11.2...v1.11.3) (2026-10-16)
+
+
+### Bug Fixes
+
+* **scd:** neutralize UnityPlayer.finish and UnityPlayerActivity.finish ([59d3b74](https://github.com/monesys/aimal-patches/commit/59d3b74ccf6820fb983a5ab9b46d944d88bf5975))
+
 ## [1.11.2](https://github.com/monesys/aimal-patches/compare/v1.11.1...v1.11.2) (2026-10-16)
 
 
