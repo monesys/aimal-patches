@@ -5,6 +5,7 @@ import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import java.util.logging.Logger
 
 val SERPENT_CHAIN_DEFENSE = Compatibility(
@@ -29,11 +30,22 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         val logger = Logger.getLogger(this::class.java.name)
         var patched = 0
 
+        fun findMatchingClasses(classType: String): List<ClassDef> {
+            val matches = mutableListOf<ClassDef>()
+            classDefForEach { def ->
+                if (def.type == classType) {
+                    matches.add(def)
+                }
+            }
+            return matches
+        }
+
         // ==========================================
         // Part 1: Patch AyoomiApplication
         // ==========================================
-        val appClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/AyoomiApplication;")
-        if (appClass != null) {
+        val appClasses = findMatchingClasses("Lcom/ayoomi/sdk/AyoomiApplication;")
+        for (rawApp in appClasses) {
+            val appClass = mutableClassDefBy(rawApp)
             // 1. Force RewardAdIsReady(String)Z -> always true
             val readyMethod = appClass.methods.firstOrNull {
                 it.name == "RewardAdIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;")
@@ -140,15 +152,15 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: patched AyoomiApplication.ShowInterstitialAd to instantly complete callback")
                 patched++
             }
-        } else {
-            logger.warning("Ayoomi Instant Rewards: target class Lcom/ayoomi/sdk/AyoomiApplication; not found")
+        }
         }
 
         // ==========================================
         // Part 2: Patch AyoomiUnity (Direct Unity Callbacks)
         // ==========================================
-        val unityClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/AyoomiUnity;")
-        if (unityClass != null) {
+        val unityClasses = findMatchingClasses("Lcom/ayoomi/sdk/AyoomiUnity;")
+        for (rawUnity in unityClasses) {
+            val unityClass = mutableClassDefBy(rawUnity)
             // 6. Force AyoomiUnity.RewardAdIsReady(String)Z -> always true
             val uReadyMethod = unityClass.methods.firstOrNull {
                 it.name == "RewardAdIsReady" && it.returnType == "Z" && it.parameterTypes == listOf("Ljava/lang/String;")
@@ -269,15 +281,15 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: patched AyoomiUnity.ShowInterstitialAd(2) to instantly call onClosed()")
                 patched++
             }
-        } else {
-            logger.warning("Ayoomi Instant Rewards: target class Lcom/ayoomi/sdk/AyoomiUnity; not found")
+        }
         }
 
         // ==========================================
         // Part 3: Patch AdapterMAX (AppLovin MAX Fallback)
         // ==========================================
-        val maxClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/adapter/AdapterMAX;")
-        if (maxClass != null) {
+        val maxClasses = findMatchingClasses("Lcom/ayoomi/sdk/adapter/AdapterMAX;")
+        for (rawMax in maxClasses) {
+            val maxClass = mutableClassDefBy(rawMax)
             val maxReady = maxClass.methods.firstOrNull {
                 it.name == "RewardIsReady" && it.returnType == "Z" && it.parameterTypes.isEmpty()
             }
@@ -342,13 +354,15 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 patched++
             }
         }
+        }
 
         // ==========================================
         // Part 4: Complete PairIP License Check & Crash Killer Bypass (for Non-Root / Galaxy S24)
         // ==========================================
         // 1. Neuter PairIP LicenseClient.checkLicense(Context) root trigger
-        val licenseClientClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseClient;")
-        if (licenseClientClass != null) {
+        val licenseClientClasses = findMatchingClasses("Lcom/pairip/licensecheck/LicenseClient;")
+        for (rawLicenseClientClass in licenseClientClasses) {
+            val licenseClientClass = mutableClassDefBy(rawLicenseClientClass)
             val checkLicenseMethod = licenseClientClass.methods.firstOrNull {
                 it.name == "checkLicense" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/content/Context;")
             }
@@ -413,11 +427,23 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.startErrorDialogActivity()")
                 patched++
             }
+
+            val startPaywallMethod = licenseClientClass.methods.firstOrNull {
+                it.name == "startPaywallActivity" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/app/PendingIntent;")
+            }
+            if (startPaywallMethod != null && startPaywallMethod.implementation != null) {
+                val target = licenseClientClass.methods.first { it == startPaywallMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseClient.startPaywallActivity()")
+                patched++
+            }
+        }
         }
 
         // 7. Neuter PairIP Application.attachBaseContext license check
-        val pairipAppClass = mutableClassDefByOrNull("Lcom/pairip/application/Application;")
-        if (pairipAppClass != null) {
+        val pairipAppClasses = findMatchingClasses("Lcom/pairip/application/Application;")
+        for (rawPairipApp in pairipAppClasses) {
+            val pairipAppClass = mutableClassDefBy(rawPairipApp)
             val attachMethod = pairipAppClass.methods.firstOrNull {
                 it.name == "attachBaseContext" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/content/Context;")
             }
@@ -434,10 +460,12 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 patched++
             }
         }
+        }
 
         // 8. Neuter PairIP LicenseContentProvider.onCreate()
-        val providerClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseContentProvider;")
-        if (providerClass != null) {
+        val providerClasses = findMatchingClasses("Lcom/pairip/licensecheck/LicenseContentProvider;")
+        for (rawProv in providerClasses) {
+            val providerClass = mutableClassDefBy(rawProv)
             val onCreateMethod = providerClass.methods.firstOrNull {
                 it.name == "onCreate" && it.returnType == "Z" && it.parameterTypes.isEmpty()
             }
@@ -448,10 +476,12 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 patched++
             }
         }
+        }
 
         // 9. Neuter PairIP LicenseActivity.exitApp() and closeApp()
-        val licenseActivityClass = mutableClassDefByOrNull("Lcom/pairip/licensecheck/LicenseActivity;")
-        if (licenseActivityClass != null) {
+        val licenseActivityClasses = findMatchingClasses("Lcom/pairip/licensecheck/LicenseActivity;")
+        for (rawLA in licenseActivityClasses) {
+            val licenseActivityClass = mutableClassDefBy(rawLA)
             val exitAppMethod = licenseActivityClass.methods.firstOrNull {
                 it.name == "exitApp" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
@@ -459,6 +489,24 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 val target = licenseActivityClass.methods.first { it == exitAppMethod }
                 target.addInstructions(0, "return-void")
                 logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.exitApp()")
+                patched++
+            }
+            val closeAppMethod = licenseActivityClass.methods.firstOrNull {
+                it.name == "closeApp" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (closeAppMethod != null && closeAppMethod.implementation != null) {
+                val target = licenseActivityClass.methods.first { it == closeAppMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.closeApp()")
+                patched++
+            }
+            val closeAllTasksMethod = licenseActivityClass.methods.firstOrNull {
+                it.name == "closeAllTasks" && it.returnType == "V" && it.parameterTypes.isEmpty()
+            }
+            if (closeAllTasksMethod != null && closeAllTasksMethod.implementation != null) {
+                val target = licenseActivityClass.methods.first { it == closeAllTasksMethod }
+                target.addInstructions(0, "return-void")
+                logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.closeAllTasks()")
                 patched++
             }
             val onStartMethod = licenseActivityClass.methods.firstOrNull {
@@ -470,13 +518,31 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: neutered PairIP LicenseActivity.onStart()")
                 patched++
             }
+            val onCreateMethod = licenseActivityClass.methods.firstOrNull {
+                it.name == "onCreate" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/os/Bundle;")
+            }
+            if (onCreateMethod != null && onCreateMethod.implementation != null) {
+                val target = licenseActivityClass.methods.first { it == onCreateMethod }
+                target.addInstructions(
+                    0,
+                    """
+                    invoke-super {p0, p1}, Landroid/app/Activity;->onCreate(Landroid/os/Bundle;)V
+                    invoke-virtual {p0}, Landroid/app/Activity;->finish()V
+                    return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: neutralized PairIP LicenseActivity.onCreate() -> finish()")
+                patched++
+            }
+        }
         }
 
         // ==========================================
         // Part 7: Suppress Application.Quit in UnityPlayer & Prevent Pause Shutdown
         // ==========================================
-        val unityPlayerClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayer;")
-        if (unityPlayerClass != null) {
+        val unityPlayerClasses = findMatchingClasses("Lcom/unity3d/player/UnityPlayer;")
+        for (rawUnityPlayer in unityPlayerClasses) {
+            val unityPlayerClass = mutableClassDefBy(rawUnityPlayer)
             val killMethod = unityPlayerClass.methods.firstOrNull {
                 it.name == "kill" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
@@ -519,10 +585,12 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 patched++
             }
         }
+        }
 
         // Also neuter UnityPlayerActivity.onDestroy / finish / moveTaskToBack / onUnityPlayerUnloaded
-        val upActivityClass = mutableClassDefByOrNull("Lcom/unity3d/player/UnityPlayerActivity;")
-        if (upActivityClass != null) {
+        val upActivityClasses = findMatchingClasses("Lcom/unity3d/player/UnityPlayerActivity;")
+        for (rawUPA in upActivityClasses) {
+            val upActivityClass = mutableClassDefBy(rawUPA)
             val finishMethod = upActivityClass.methods.firstOrNull {
                 it.name == "finish" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
@@ -553,10 +621,12 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 patched++
             }
         }
+        }
 
         // Neuter FCMService.requestNotificationPermission to prevent PermissionController dialog from popping up and backgrounding the activity
-        val fcmClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/FCMService;")
-        if (fcmClass != null) {
+        val fcmClasses = findMatchingClasses("Lcom/ayoomi/sdk/FCMService;")
+        for (rawFcm in fcmClasses) {
+            val fcmClass = mutableClassDefBy(rawFcm)
             val reqPermMethod = fcmClass.methods.firstOrNull {
                 it.name == "requestNotificationPermission" && it.returnType == "V" && it.parameterTypes == listOf("Landroid/app/Activity;")
             }
@@ -579,8 +649,9 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
 
         // Fix infinite loading loop in AyoomiApplication.GetInitState() (AyoomiApplication$4.run)
         // Ensure AyoomiApplication.isInitAdj is true, or immediate callback dispatch
-        val ayoomiAppClass = mutableClassDefByOrNull("Lcom/ayoomi/sdk/AyoomiApplication;")
-        if (ayoomiAppClass != null) {
+        val ayoomiAppClasses = findMatchingClasses("Lcom/ayoomi/sdk/AyoomiApplication;")
+        for (rawApp in ayoomiAppClasses) {
+            val ayoomiAppClass = mutableClassDefBy(rawApp)
             val getInitStateMethod = ayoomiAppClass.methods.firstOrNull {
                 it.name == "GetInitState" && it.returnType == "V" && it.parameterTypes == listOf("Lcom/ayoomi/sdk/OnAyoomiInitedListener;")
             }
@@ -602,8 +673,9 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
             }
         }
 
-        val p0Class = mutableClassDefByOrNull("Lcom/unity3d/player/P0;")
-        if (p0Class != null) {
+        val p0Classes = findMatchingClasses("Lcom/unity3d/player/P0;")
+        for (rawP0 in p0Classes) {
+            val p0Class = mutableClassDefBy(rawP0)
             val runMethod = p0Class.methods.firstOrNull {
                 it.name == "run" && it.returnType == "V" && it.parameterTypes.isEmpty()
             }
@@ -630,8 +702,9 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         // Fixes the infinite loading loop where Unity queries Google Play Core for "UnityDataAssetPack"
         // and hangs on onError(-2) (PACK_UNAVAILABLE).
         // Since all YooAsset bundles are merged inside base.apk, redirect getAssetPackPath directly to base.apk.
-        val padWrapperClass = mutableClassDefByOrNull("Lcom/unity3d/player/PlayAssetDeliveryUnityWrapper;")
-        if (padWrapperClass != null) {
+        val padWrapperClasses = findMatchingClasses("Lcom/unity3d/player/PlayAssetDeliveryUnityWrapper;")
+        for (rawPAD in padWrapperClasses) {
+            val padWrapperClass = mutableClassDefBy(rawPAD)
             val getPathMethod = padWrapperClass.methods.firstOrNull {
                 it.name == "getAssetPackPath" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
             }
@@ -655,10 +728,82 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: redirected PlayAssetDeliveryUnityWrapper.getAssetPackPath to base.apk")
                 patched++
             }
+
+            val getStatesMethod = padWrapperClass.methods.firstOrNull {
+                it.name == "getAssetPackStates" &&
+                    it.returnType == "V" &&
+                    it.parameterTypes == listOf("[Ljava/lang/String;", "Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;")
+            }
+            if (getStatesMethod != null && getStatesMethod.implementation != null) {
+                val target = padWrapperClass.methods.first { it == getStatesMethod }
+                target.addInstructions(
+                    0,
+                    """
+                        move-object/from16 v0, p2
+                        if-eqz v0, :morphe_pad_skip_cb
+                        move-object/from16 v1, p1
+                        if-eqz v1, :morphe_pad_skip_cb
+                        array-length v2, v1
+                        new-array v3, v2, [I
+                        new-array v4, v2, [I
+                        const/4 v5, 0x0
+                        :morphe_pad_loop
+                        if-ge v5, v2, :morphe_pad_call
+                        const/4 v6, 0x4
+                        aput v6, v3, v5
+                        const/4 v6, 0x0
+                        aput v6, v4, v5
+                        add-int/lit8 v5, v5, 0x1
+                        goto :morphe_pad_loop
+                        :morphe_pad_call
+                        const-wide/16 v5, 0x0
+                        invoke-interface/range {v0 .. v6}, Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;->onStatusResult(J[Ljava/lang/String;[I[I)V
+                        :morphe_pad_skip_cb
+                        return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: mocked PlayAssetDeliveryUnityWrapper.getAssetPackStates -> COMPLETED (status=4)")
+                patched++
+            }
+
+            val getStateMethod = padWrapperClass.methods.firstOrNull {
+                it.name == "getAssetPackState" &&
+                    it.returnType == "V" &&
+                    it.parameterTypes == listOf("Ljava/lang/String;", "Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;")
+            }
+            if (getStateMethod != null && getStateMethod.implementation != null) {
+                val target = padWrapperClass.methods.first { it == getStateMethod }
+                target.addInstructions(
+                    0,
+                    """
+                        move-object/from16 v0, p2
+                        if-eqz v0, :morphe_pad_skip_single_cb
+                        move-object/from16 v5, p1
+                        if-eqz v5, :morphe_pad_skip_single_cb
+                        const/4 v2, 0x1
+                        new-array v1, v2, [Ljava/lang/String;
+                        const/4 v6, 0x0
+                        aput-object v5, v1, v6
+                        new-array v3, v2, [I
+                        const/4 v5, 0x4
+                        aput v5, v3, v6
+                        new-array v4, v2, [I
+                        aput v6, v4, v6
+                        const-wide/16 v5, 0x0
+                        invoke-interface/range {v0 .. v6}, Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;->onStatusResult(J[Ljava/lang/String;[I[I)V
+                        :morphe_pad_skip_single_cb
+                        return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: mocked PlayAssetDeliveryUnityWrapper.getAssetPackState -> COMPLETED")
+                patched++
+            }
+        }
         }
 
-        val playerNClass = mutableClassDefByOrNull("Lcom/unity3d/player/n;")
-        if (playerNClass != null) {
+        val playerNClasses = findMatchingClasses("Lcom/unity3d/player/n;")
+        for (rawN in playerNClasses) {
+            val playerNClass = mutableClassDefBy(rawN)
             val aMethod = playerNClass.methods.firstOrNull {
                 it.name == "a" && it.returnType == "Ljava/lang/String;" && it.parameterTypes == listOf("Ljava/lang/String;")
             }
@@ -682,6 +827,44 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
                 logger.info("Ayoomi Instant Rewards: redirected com.unity3d.player.n.a(String) to base.apk")
                 patched++
             }
+
+            val aCallbackMethod = playerNClass.methods.firstOrNull {
+                it.name == "a" &&
+                    it.returnType == "V" &&
+                    it.parameterTypes == listOf("[Ljava/lang/String;", "Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;")
+            }
+            if (aCallbackMethod != null && aCallbackMethod.implementation != null) {
+                val target = playerNClass.methods.first { it == aCallbackMethod }
+                target.addInstructions(
+                    0,
+                    """
+                        move-object/from16 v0, p2
+                        if-eqz v0, :morphe_n_skip_cb
+                        move-object/from16 v1, p1
+                        if-eqz v1, :morphe_n_skip_cb
+                        array-length v2, v1
+                        new-array v3, v2, [I
+                        new-array v4, v2, [I
+                        const/4 v5, 0x0
+                        :morphe_n_loop
+                        if-ge v5, v2, :morphe_n_call
+                        const/4 v6, 0x4
+                        aput v6, v3, v5
+                        const/4 v6, 0x0
+                        aput v6, v4, v5
+                        add-int/lit8 v5, v5, 0x1
+                        goto :morphe_n_loop
+                        :morphe_n_call
+                        const-wide/16 v5, 0x0
+                        invoke-interface/range {v0 .. v6}, Lcom/unity3d/player/IAssetPackManagerStatusQueryCallback;->onStatusResult(J[Ljava/lang/String;[I[I)V
+                        :morphe_n_skip_cb
+                        return-void
+                    """.trimIndent()
+                )
+                logger.info("Ayoomi Instant Rewards: mocked com.unity3d.player.n.a([String], Callback) -> COMPLETED")
+                patched++
+            }
+        }
         }
 
         if (patched > 0) {
