@@ -650,8 +650,8 @@ val ayoomiInstantRewardsPatch = bytecodePatch(
         // Fix infinite loading loop in AyoomiApplication.GetInitState() (AyoomiApplication$4.run)
         // Ensure AyoomiApplication.isInitAdj is true, or immediate callback dispatch
         val ayoomiAppClasses = findMatchingClasses("Lcom/ayoomi/sdk/AyoomiApplication;")
-        for (rawApp in ayoomiAppClasses) {
-            val ayoomiAppClass = mutableClassDefBy(rawApp)
+        for (rawAyoomiApp in ayoomiAppClasses) {
+            val ayoomiAppClass = mutableClassDefBy(rawAyoomiApp)
             val getInitStateMethod = ayoomiAppClass.methods.firstOrNull {
                 it.name == "GetInitState" && it.returnType == "V" && it.parameterTypes == listOf("Lcom/ayoomi/sdk/OnAyoomiInitedListener;")
             }
